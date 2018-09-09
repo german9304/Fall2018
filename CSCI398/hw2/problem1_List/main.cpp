@@ -7,7 +7,6 @@ using std::endl;
 
 #include "list.h"
 
-
 int main(){
     List alist, another;
 	int size1;

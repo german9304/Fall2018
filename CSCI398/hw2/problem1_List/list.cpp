@@ -5,6 +5,7 @@ using std::endl;
 
 //destructor of the class
 //this function is called when List object is destroyed
+
 List::~List(){
    Node *ptr = head;
    while(ptr != NULL){
@@ -73,4 +74,69 @@ void List::insert_sorted(int st){
     }//else
     length++;
 }//insert_sorted
+
+
+void List::merge(List &another){
+  Node *cur = head;
+  Node *curAnother = another.head;
+  while(cur != NULL){
+     int cur_value = cur->value;
+     int another_value = curAnother->value;
+     if(cur_value > another_value){
+         Node * temp = cur;
+         Node * temp2 = curAnother->next;
+         if(cur == head){
+            head = curAnother;
+            head->next = cur;
+            cur = head;
+            another.head = temp2;
+            curAnother = another.head;
+         }
+
+     }else if(cur_value < another_value){
+        Node * temp = cur->next;
+        Node * temp2 = curAnother->next;
+        if(temp != NULL){
+          if(temp->value >  curAnother->value){
+          cur->next = curAnother;
+          Node *nextn = cur->next;
+          nextn->next = temp;
+          another.head = temp2;
+          curAnother = another.head;
+          cur = nextn;
+          if(curAnother == NULL){
+            cur = NULL;
+          }
+        }else{
+          cur = cur->next;
+        }
+      }else{
+        cur->next = curAnother;
+        Node *nextn = cur->next;
+        nextn->next = NULL;
+        another.head = temp2;
+        curAnother = another.head;
+        cur = nextn;
+         if(curAnother == NULL){
+            cur = NULL;
+          }
+      }
+
+     }else{
+
+
+     }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
