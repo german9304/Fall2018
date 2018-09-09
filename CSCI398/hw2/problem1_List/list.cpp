@@ -83,30 +83,35 @@ void List::merge(List &another){
      int cur_value = cur->value;
      int another_value = curAnother->value;
      if(cur_value > another_value){
-         Node * temp = cur;
-         Node * temp2 = curAnother->next;
+         Node * cur_temp = cur;
+         Node * another_temp = curAnother->next;
          if(cur == head){
             head = curAnother;
-            head->next = cur;
-            cur = head;
-            another.head = temp2;
+            head->next = cur_temp;
+            Node *th = head;
+            cur = th;
+            another.head = another_temp;
             curAnother = another.head;
          }
 
      }else if(cur_value < another_value){
-        Node * temp = cur->next;
-        Node * temp2 = curAnother->next;
-        if(temp != NULL){
-          if(temp->value >  curAnother->value){
+        Node * cur_temp = cur->next;
+        Node * another_temp = curAnother->next;
+        if(cur_temp != NULL){
+          if(cur_temp->value >  curAnother->value){
           cur->next = curAnother;
           Node *nextn = cur->next;
-          nextn->next = temp;
-          another.head = temp2;
+          nextn->next = cur_temp;
+          another.head = another_temp;
           curAnother = another.head;
           cur = nextn;
-          if(curAnother == NULL){
-            cur = NULL;
-          }
+        }else if(cur_temp->value == curAnother->value){
+             cur->next = curAnother;
+             Node *nextn = cur->next;
+             nextn->next = cur_temp;
+             another.head = another_temp;
+             cur = cur_temp;
+             curAnother = another.head;
         }else{
           cur = cur->next;
         }
@@ -114,18 +119,24 @@ void List::merge(List &another){
         cur->next = curAnother;
         Node *nextn = cur->next;
         nextn->next = NULL;
-        another.head = temp2;
+        another.head = another_temp;
         curAnother = another.head;
         cur = nextn;
-         if(curAnother == NULL){
-            cur = NULL;
-          }
       }
 
      }else{
-
-
+      Node * cur_temp = cur->next;
+      Node * another_temp = curAnother->next;
+      cur->next = curAnother;
+      Node *nextn = cur->next;
+      nextn->next = cur_temp;
+      cur = nextn;
+      another.head = another_temp;
+      curAnother = another.head;
      }
+      if(curAnother == NULL){
+            cur = NULL;
+          }
   }
 }
 
