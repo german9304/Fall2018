@@ -10,7 +10,7 @@ class Node{
 					value = st;
 					prev = pr;
 					next = n;
-				};
+		};
                 int* value;
                 Node* prev;
                 Node* next;

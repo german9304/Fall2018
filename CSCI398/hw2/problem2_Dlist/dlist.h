@@ -18,11 +18,13 @@ class Dlist{
                 void insert(int st);
                 //prints all Students in the list 
                 void print()const;
-				void print_reverse() const;
+		void print_reverse() const;
                 //public "partition":
-				void partition(const int pivot);
+                Node * getHead();
+                Node * getTail();
+		void partition(const int pivot);
 //private member function recursive "partition":
-//void partition( use any parameters that you need );
+                void partition(Node *h, Node *t, const int pivot);
 
 };
 

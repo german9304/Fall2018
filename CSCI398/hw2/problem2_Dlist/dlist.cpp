@@ -56,4 +56,42 @@ void Dlist::print_reverse()const{
 }
 
 
+void Dlist::partition(const int pivot){
+    Node * h = head;
+    Node * t = tail;
+    partition(h, t, pivot);
+}
+
+void Dlist::partition(Node * h, Node *t, const int pivot){
+    if(h == NULL || t == NULL || h == t ){
+      return;
+    }
+    if(h != NULL){
+     if(*(h->value) < pivot){
+       h = h->next;
+      }
+    }
+    if(t != NULL){
+        if(*(t->value) > pivot){
+           t = t->prev;
+        }
+    }
+    if(t != NULL && h!= NULL){
+       if(*(t->value) < pivot && *(h->value) > pivot){
+        int tvalue = *(t->value);
+        *(t->value) = *(h->value);
+        *(h->value) = tvalue;
+         h = h->next;
+         t = t->prev;
+         if(h->prev == t && t->next == h){
+            t = NULL; 
+            h = NULL;
+         }
+       }
+    }
+
+    partition(h, t, pivot);
+}
+
+
 
