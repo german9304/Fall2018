@@ -13,7 +13,6 @@ void matrices(int size, int arr[][size]){
 		}
 }
 
-
 int main(int argc, char const *argv[])
 {
     char flag[50];
