@@ -31,9 +31,8 @@ int main(int argc, char const *argv[])
     if(!strcmp(flag,"R")){
         int size;
     	scanf("%d",&size);
-        int matrix[size][size];
-        matrix[0][0] = 34;
-        printf("row col %d\n",matrix[0][0]);
+       // int matrix[size][size];
+        //printf("row col %d\n",matrix[0][0]);
         printf("size: %d\n",size );
     	//random_matrices(size, matrix);
     }else if(!strcmp(flag,"I")){
