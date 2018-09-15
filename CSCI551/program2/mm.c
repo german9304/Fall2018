@@ -29,7 +29,7 @@ int main(int argc, char const *argv[])
     char flag[50];
     scanf("%s",flag);
     if(!strcmp(flag,"R")){
-    	int size = 4800;
+        int size;
     	scanf("%d",&size);
         int matrix[size][size];
         matrix[0][0] = 34;
