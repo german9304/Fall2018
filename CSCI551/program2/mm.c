@@ -28,6 +28,7 @@ int main(int argc, char const *argv[])
 {
     char flag[50];
     scanf("%s",flag);
+    printf("%d",1);
     if(!strcmp(flag,"R")){
     	int size = 4800;
     	//scanf("%d",&size);
