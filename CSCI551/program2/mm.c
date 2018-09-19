@@ -4,9 +4,12 @@
 #include <time.h>  
 #include <sys/time.h>   
 #include <sys/resource.h> 
+#include <immintrin.h>
+
+
 
 /*
- Multiply matrices 
+ Multiply matrices  nonvec
 */
 void multiply(int size, float final_matrix[][size], float matrix_1[][size], float matrix_2[][size]){
     float count = 0.0;
@@ -14,6 +17,7 @@ void multiply(int size, float final_matrix[][size], float matrix_1[][size], floa
         //printf("iter: %d\n",m);
        for(int l = 0; l < size; l++){
        // printf("count: %d\n", l);
+#pragma vector aligned
         for(int n = 0; n < size; n++){
             count = count + (matrix_1[m][n] * matrix_2[n][l]); 
         }
@@ -101,9 +105,7 @@ int main()
     scanf("%s",flag);
     int size;
     scanf("%d",&size);
-    float matrix_1[size][size];
-    float matrix_2[size][size];
-    float final_matrix[size][size];
+    float matrix_1[size][size],  matrix_2[size][size],  final_matrix[size][size] __attribute((aligned(32))); //alignd  ;
     if(!strcmp(flag,"R")){
     	generate_random_matrices(size, matrix_1, matrix_2);
     }else if(!strcmp(flag,"I")){
@@ -112,8 +114,9 @@ int main()
     }else{
        printf("Invalid flag: %s\n",flag);
     }
-    #ifdef ALIGNED
     multiply(size,final_matrix, matrix_1, matrix_2);
+    //multiplyVec(size, matrix_1, matrix_2);
+
     print_matrix(size, final_matrix);
     printf("user seconds without microseconds: %ld\n", buf.ru_utime.tv_sec); 
     printf("user microseconds: %ld\n", buf.ru_utime.tv_usec); 
