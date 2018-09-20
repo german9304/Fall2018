@@ -15,7 +15,9 @@ class BST{
 					}
 					insert(root, aval);				
 				};
-
+                int countSum();
+                int previous(int val);
+                void previousNode(Tnode *root_node, int val, int& max);
 				void print_inorder(){ print_inorder(root);
                         cout << endl;
 				};

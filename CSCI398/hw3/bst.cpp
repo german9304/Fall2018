@@ -76,5 +76,34 @@ Tnode* BST::findRightmost(Tnode* r){
 }
 
 
+int BST::countSum(){
+   return 0;
+}
+int BST::previous(int val){
+    Tnode * rootn = root;
+    int max = INT_MIN;
+    previousNode(rootn, val, max);
+    //cout << "node val: " << max <<endl;
+    //cout <<"min: " <<  INT_MIN <<endl;
+   return max;
+}
+
+void BST::previousNode(Tnode *root_node, int val, int & max){
+    if(root_node == NULL){
+      return;
+    }
+    if(root_node->value > val){
+        previousNode(root_node->left,val,max);
+    }
+    if(root_node->value < val){
+        //cout << root_node->value  <<endl;
+        if(root_node->value  > max){
+          max = root_node->value;
+        }
+        previousNode(root_node->right,val,max);
+    }
+       previousNode(root_node->left,val,max);
+    
+}
 
 
