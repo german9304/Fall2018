@@ -76,9 +76,6 @@ Tnode* BST::findRightmost(Tnode* r){
 }
 
 
-int BST::countSum(){
-   return 0;
-}
 int BST::previous(int val){
     Tnode * rootn = root;
     int max = INT_MIN;
@@ -105,5 +102,89 @@ void BST::previousNode(Tnode *root_node, int val, int & max){
        previousNode(root_node->left,val,max);
     
 }
+
+int  BST::countSum(){
+     Tnode * cur = root;
+     int sum = 0;
+     std::queue<Node> aq;
+     sumNodes(cur,sum,aq);
+     return sum;
+}
+
+void BST::iterate(Tnode * rootn, int & total_sum){
+    if(rootn != NULL){
+     //cout << "vals: " << rootn->value <<endl;
+    total_sum+= rootn->value;
+    iterate(rootn->left,total_sum);
+    iterate(rootn->right, total_sum);
+    }
+}
+ void BST::sumNodes(Tnode * rootn, int & sum, std::queue<Node> & aq){
+    // if(rootn != NULL){
+    //      cout << "sumnodes: " << rootn->value <<endl;
+
+    //     iterate(rootn);
+    //     sumNodes(rootn->left, sum, aq);
+    //     sumNodes(rootn->right, sum, aq);
+    // }
+   Node an;
+   an.node = rootn;
+   an.sum = root->value;
+   aq.push(an);
+   int res = 0;
+   int n1 = 0;
+   int n2 = 0;
+   int res2 = 0;
+   while(!aq.empty()){
+    Node an = aq.front();
+    Tnode * tn = an.node;
+     if(tn != NULL){
+       // std::cout << "value: " << tn->value <<endl; 
+       if(tn->left != NULL){
+       // cout << "iter 1" <<endl;
+        iterate(tn->left,res);
+        //cout << "total sum res 1: " << res << " sum: " << an.sum <<  " " << tn->left->value << endl;
+        }
+        if(tn->right != NULL){
+        iterate(tn->right,res2);
+            //cout << "total sum res 2: " << res2 << " sum: " << an.sum <<  " " << tn->right->value << endl;
+        }
+       // cout << "total sum: " << res << " " << an.sum << endl;
+      if(tn != root){
+        if(res == an.sum  ){
+          //cout << "total sum: " << res <<endl;
+          sum++;
+        }
+        if(res2 == an.sum){
+          sum++;
+          //cout << "total sum: " << res2 <<endl;
+        }
+      }
+
+        res = 0;
+        res2 = 0;
+        if(tn->left != NULL){
+            // cout << "n1 left: " << n1 <<  " value: " << tn->left->value << endl;
+          n1 =  an.sum + tn->left->value;
+        }
+        if(tn->right != NULL){
+          //cout << "n2 right: " << n2 <<  " value: " << tn->right->value << endl;
+          n2 = an.sum + tn->right->value;
+        }
+        Node temp; 
+        temp.node = tn->left;
+        temp.sum = n1;
+        Node temp2;
+        temp2.node =tn->right;
+        temp2.sum = n2;
+        aq.push(temp);
+        aq.push(temp2);
+     }
+      aq.pop();
+   }
+ }
+
+
+
 
 
