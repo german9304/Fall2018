@@ -1,0 +1,10 @@
+9
+addEdge 0 6 10
+addEdge 1 4 9
+addEdge 2 3 6
+addEdge 3 0 1
+addEdge 4 5 8
+addEdge 5 8 2
+addEdge 7 6 9
+addEdge 8 7 10
+allToOnePaths
