@@ -46,6 +46,8 @@ public:
 	void dfsVisit(int u, int &t);
 	void dfs_longest(int & from, int & to);
 	void dfsVisit_longest(int u, int &t, int & from, int & to);
+	void dfsTopSort();
+	void dfsVisitTopSort(int u, int &t, bool & exist);
     int longestCycle();
     void allToOnePaths();
 	void printDistance(){
@@ -72,6 +74,7 @@ private:
 	int max_distance = -1;
     int size;
 	vector<vector<edge> > transpose;
+	vector<int> topsort;
 };
 
 #endif
