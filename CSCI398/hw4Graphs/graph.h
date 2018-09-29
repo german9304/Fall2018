@@ -50,6 +50,9 @@ public:
 	void dfsVisitTopSort(int u, int &t, bool & exist);
     int longestCycle();
     void allToOnePaths();
+    void transposeGraph();
+    void tbfs(int s);
+    void backtrack(int s, int to, vector<int> parents);
 	void printDistance(){
 		for(int i = 0; i < size; i++)
 			cout << distance[i] << " " ;
@@ -61,6 +64,7 @@ public:
 		}
 		cout << endl;
 	}
+	void addEdgeT(int u, int v);
 	void retrieve_longestlist(vector< int >  distance, int from, int to);
 
 	
@@ -75,6 +79,7 @@ private:
     int size;
 	vector<vector<edge> > transpose;
 	vector<int> topsort;
+	vector< vector<edge> > AdjT; 
 };
 
 #endif

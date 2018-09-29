@@ -34,6 +34,12 @@ void Graph::addEdge(int u, int v, int aweight){
 
 }
 
+void Graph::addEdgeT(int u, int v){
+
+	AdjT[v].push_back(edge(v, u,0));
+
+}
+
 void Graph::removeEdge(int u, int v){
 	int uSize = (int)Adj[u].size();
 
@@ -98,7 +104,7 @@ void Graph::dfs(){
 			dfsVisit(i, t);
 		}//if
 	}//for
-	cout << endl;
+	// cout << endl;
 }//dfs
 
 void Graph::dfsVisit(int u, int &t){
@@ -121,17 +127,11 @@ void Graph::dfsVisit(int u, int &t){
 }//dfsVisit	
 
 void Graph::dfs_longest(int & from, int & to){
-	// cout << "size: " <<size <<endl;
-	 // vector<int> distanceArray(size,INT_MAX);
 	distanceDFS.resize(size, INT_MAX);
 	for(int i = 0; i < size; i++){
 		parents[i] = i;
 		colors[i] = 'W';
-	}
-	// cout << "distance array " <<endl;
-	// for(int i = 0; i < size; i++){
-	// 	cout << distanceDFS[i] <<endl;
-	// }		
+	}		
 	int t = 0;
 	for(int i = 0; i < size; i++){
 		if(colors[i] == 'W'){
@@ -140,12 +140,6 @@ void Graph::dfs_longest(int & from, int & to){
 			dfsVisit_longest(i, t, from, to);
 		}//if
 	}//for
-	// cout << "distance array " <<endl;
-	// for(int i = 0; i < size; i++){
-	// 	cout << distanceDFS[i] <<" ";
-	// }
-	// cout << "max: " <<max_distance <<endl;	
-	// cout << endl;
 }//dfs
 
 void Graph::dfsVisit_longest(int u, int &t, int & from, int & to){
@@ -208,7 +202,6 @@ void Graph::dfsTopSort(){
 	int t = 0;
 	for(int i = size-1; i > 0; i--){
 		int v = topsort[i];
-		cout << "beforev: " <<v <<endl;
 		bool exist = false;
 	     if(colors[v] == 'W'){
 			//color[i] = 'G';
@@ -217,7 +210,6 @@ void Graph::dfsTopSort(){
     	         cout << "does not exist" <<endl;
                }
 	 	}//if
-
 		for(int i = 0; i < size; i++){
 		parents[i] = i;
 		colors[i] = 'W';
@@ -228,15 +220,16 @@ void Graph::dfsTopSort(){
 }//dfs
 
 void Graph::dfsVisitTopSort(int u, int &t, bool & exist){
-	// colors[u] = 'G';
-	// stamps[u].d = t;
-	// t++;
+	colors[u] = 'G';
+	stamps[u].d = t;
+	t++;
+	   cout  << u << " ";
 	for(int i = 0; i < (int)Adj[u].size(); i++){
 			int v = Adj[u][i].neighbor;
 			if(colors[v] == 'W'){
 				parents[v] = u;
 				colors[v] = 'G';
-			 cout  << v << endl;
+				// cout  << v << endl;
 				if(v == topsort[0]){
                    // cout << "equal: "<< v << endl;
                    exist = true;
@@ -245,18 +238,77 @@ void Graph::dfsVisitTopSort(int u, int &t, bool & exist){
 			 }
 
 	}//for
-	cout << "------" <<endl;
-	colors[u] = 'B';
+	// cout << "------"<<endl;
+	 // colors[u] = 'B';
 	stamps[u].f = t;
 	t++;
 	
 }//dfsVisit	
 
+void Graph::transposeGraph(){
+	AdjT.resize(size);
+    for(unsigned int i = 0; i < Adj.size(); i++){
+    	for(unsigned int j = 0; j < Adj[i].size(); j++){
+           int n = Adj[i][j].neighbor;
+           addEdgeT(i, n);
+    	}
+    }
+}
+void Graph::tbfs(int s){
+	for(int i = 0; i < size; i++){
+		distance[i] = INT_MAX;
+		parents[i] = i;
+	}//for
+	distance[s] = 0;
+	queue<int> aq;
+	aq.push(s);
+	while(!aq.empty()){
+		int u = aq.front();
+        aq.pop();
+        // cout << u << " ";
+		for(int i = 0; i < (int)AdjT[u].size(); i++){
+			int v = AdjT[u][i].neighbor;
+			if(distance[v] == INT_MAX){
+				distance[v] = distance[u] + 1;
+
+				parents[v] = u;
+				aq.push(v);
+			}
+		}//for
+	}//while
+	// cout << endl;
+}
+void Graph::backtrack(int s, int to, vector<int> parents){
+   if(to == s){
+   	 cout << to << " ";
+     return;
+   }
+
+   cout << to << " ";
+   to = parents[to];
+   backtrack(s,to, parents);
+}
 void Graph::allToOnePaths(){
-  cout << "size: " << size <<endl;
-  dfs();
-  dfsTopSort();
-  cout <<endl;
+    dfs();
+    transposeGraph();
+    int s = topsort[0];
+    tbfs(s);
+    bool source = false;
+    for(int i = 0; i < size;i++ ){
+     if(distance[i] == INT_MAX){
+       source = true;
+       break;
+     }
+    }
+    if(!source){
+         for(int i = 0; i < size;i++){
+           if(i != s){
+           backtrack(s, i, parents);
+            cout <<endl;
+           }
+         }
+    }
+    
 }
 
 
