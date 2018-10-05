@@ -1,0 +1,9 @@
+insert	most	2
+insert	best	2
+insert	hello	2
+insert	special	2
+insert	please	2
+insert	the	2
+insert	top	2
+insert	altar	2
+printPath 4

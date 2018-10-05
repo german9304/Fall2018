@@ -54,10 +54,9 @@ void Graph::printGraph(){
 	for(int u = 0; u < size; u++){
 		int uSize = (int)Adj[u].size();
 		cout << u << ": ";
-		for(int i = 0; i < uSize; i++){
-			cout << Adj[u][i].neighbor << " " << " w: " << Adj[u][i].w <<" ";
+		for(int i = 0; i < uSize; i++)
+			cout << Adj[u][i].neighbor << " ";
 		cout <<endl;
-	    }
 	}
 }
 
@@ -120,58 +119,32 @@ void Graph::dfsVisit(int u, int &t){
 }//dfsVisit	
 
 void Graph::backTrack(vector<int> & parents, int u, int v, int vertex, bool & found){
-     if(u == v){
-     	 cout <<"test found: " <<v << " " <<  u <<" ";
+     if(u == vertex){
      	 found = true;
-   	 // return;
      }
      if(u == parents[u]){
-     	 // cout << "test not found" <<endl;
      return;
      }
-       // cout <<"backTrack: " <<  u <<" ";
-      // cout <<"backTrack: " <<u << " " <<  parents[u] <<" ";
    u = parents[u];
    backTrack(parents,u, v, vertex,found);
-    // cout << u <<" ";
 }
-void Graph::dfsVisitCycle(int u, int vertex, bool & found, int & lastv){
+void Graph::dfsVisitCycle(int s, int u, int vertex, bool & found, int & lastv){
 	colors[u] = 'G';
 	for(int i = 0; i < (int)Adj[u].size(); i++){
 			int v = Adj[u][i].neighbor;
 			int w = Adj[u][i].w;
-			// cout <<w <<  "vertex: " << vertex << " " << v << endl;
 			if(w!= -1){
 			if(colors[v] == 'W'){
 				parents[v] = u;
 				colors[v] = 'G';
-				dfsVisitCycle(v, vertex, found, lastv);
+				dfsVisitCycle(s, v, vertex, found, lastv);
 			}
-			if(colors[v] == 'G' && !found){
-				 cout <<endl;
-				  cout <<" u "<< u  << " v: " << v << endl;
-				  cout << "parents: " <<endl;
-		    for(int i = 0; i < size; i++){
-					cout << parents[i] <<" ";
-
-			}
-             // cout <<endl;
-			 if(u == vertex){
-			 	  cout << "found: " <<endl;
-			//  	   for(int i = 0; i < size; i++){
-			// 		cout << parents[i] <<" ";
-
-			// }
-			// cout <<endl;
-			 	 lastv = u;
-			 	 found = true;
-			 }else{
+			if(colors[v] == 'G'  && s == v){
                backTrack(parents,u, v, vertex, found);
-                if(found){
-                  found = true;
-                  lastv = u;
+                 if(found){
+                   found = true;
+                   lastv = u;
                 }
-			 }
 			}
 		}
 	}//for
@@ -180,15 +153,15 @@ void  Graph::dfsMarkNodes(vector<int> & parents,int u, int v){
     if(u == v){
      return;
      }
-    cout << "iter v: " << v  << " parent: " << parents[v] << endl;
-   int p = parents[v];
-   int ch = v;
+   int ch = u;
+   int p = v;
    for(int i = 0; i < (int)Adj[p].size(); i++){
 			int vch = Adj[p][i].neighbor;
 			if(vch == ch){
                Adj[p][i].w = -1;
 			}
    }
+   u = v;
    v = parents[v];
    dfsMarkNodes(parents,u, v);
 
@@ -196,36 +169,24 @@ void  Graph::dfsMarkNodes(vector<int> & parents,int u, int v){
 }
 //Problem 3
 bool Graph::foundCycle(int u, int v){
-	  bool found = false;
-        // while(!found){
-	  int lastv = 0;
-          dfsVisitCycle(u, v, found, lastv);
-        // }
-         // cout << "after while parents" <<endl;
-        // for(int i = 0; i < size ; i++){
-        //       	cout << parents[i] <<" ";
-        // }
-
-          if(found){
-          	// cout << "lastv: " << lastv <<endl;
-			dfsMarkNodes(parents, u, lastv);
-			 for(int i = 0; i < size; i++){
-					parents[i] = i;
-					colors[i] = 'W';
-			}
-			found = false;
-			  printGraph();
-			dfsVisitCycle(u, v, found, lastv);
-             // printGraph();
-            cout << "found: " << found << endl;
-          }
-
-       return true;
+	bool found = false;
+	int lastv = 0;
+	dfsVisitCycle(u, u, v, found, lastv);
+	if(found){
+		dfsMarkNodes(parents, u, lastv);
+		for(int i = 0; i < size; i++){
+			parents[i] = i;
+			colors[i] = 'W';
+		}
+		found = false;
+		dfsVisitCycle(u, u, v, found, lastv);
+		return true;
+	}
+	return false;
 }
 bool Graph::twoCycles(int u, int v){
    bool f = foundCycle(u,v);
-   f = true;
-   return true;
+   return f;
 } 
 
 

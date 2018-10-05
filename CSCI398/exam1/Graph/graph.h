@@ -61,7 +61,7 @@ public:
 	//Problem 3
 	bool twoCycles(int u, int v);
 	bool foundCycle(int u, int v);
-	void dfsVisitCycle(int u, int vertex, bool & found, int & lastv);
+	void dfsVisitCycle(int s, int u, int vertex, bool & found, int & lastv);
 	void dfsMarkNodes(vector<int> & parents, int u, int v);
     void backTrack(vector<int> & parents, int u, int v, int vertex, bool & found);
 	
