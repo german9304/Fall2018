@@ -195,28 +195,28 @@ void init_matrix(int size, float final_matrix[][size]){
 }
 int main()
 {
-    struct rusage buf;  
-    char flag[50];
-    scanf("%s",flag);
-    int size;
-    scanf("%d",&size);
-    float matrix_1[size][size] __attribute__((aligned(32)));
-    float matrix_2[size][size] __attribute__((aligned(32)));
-    float final_matrix[size][size]  __attribute__((aligned(32)));
-    if(!strcmp(flag,"R")){
-    	generate_random_matrices(size, matrix_1, matrix_2);
-    }else if(!strcmp(flag,"I")){
-    	generate_matrices(size,matrix_1, matrix_2);
+  struct rusage buf;  
+  char flag[50];
+  scanf("%s",flag);
+  int size;
+  scanf("%d",&size);
+  float matrix_1[size][size] __attribute__((aligned(32)));
+  float matrix_2[size][size] __attribute__((aligned(32)));
+  float final_matrix[size][size]  __attribute__((aligned(32)));
+  if(!strcmp(flag,"R")){
+  	generate_random_matrices(size, matrix_1, matrix_2);
+  }else if(!strcmp(flag,"I")){
+  	generate_matrices(size,matrix_1, matrix_2);
 
-    }
-    init_matrix(size, final_matrix);
-    multiply(size,final_matrix, matrix_1, matrix_2, buf);
-    getrusage(RUSAGE_SELF, &buf);
-     
-    if(!strcmp(flag,"I")){
-      print_matrix_result(size, final_matrix);
-    }
-    print_usertime(buf);
+  }
+  init_matrix(size, final_matrix);
+  multiply(size,final_matrix, matrix_1, matrix_2, buf);
+  getrusage(RUSAGE_SELF, &buf);
+   
+  if(!strcmp(flag,"I")){
+    print_matrix_result(size, final_matrix);
+  }
+  print_usertime(buf);
 
 	return 0;
 }
