@@ -1,0 +1,4 @@
+printDif 15 79
+printDif 3982714201 4219329529
+printDif 4000741957 0
+printDif -1 -3
