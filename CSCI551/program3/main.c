@@ -38,7 +38,7 @@ void isDiagonalDominant(double ** matrix, int n){
 }
 
 
-bool absRelApproxError(double *vec, double values[], int n){
+bool absRelApproxErrorJacobi(double *vec, double values[], int n){
   double absError[n];
   // printf("vec: \n");
   // for(int i = 0; i < n; i++){
@@ -50,24 +50,58 @@ bool absRelApproxError(double *vec, double values[], int n){
   //     printf(" %f ", values[i]);
   // }
   int count = 0;
+  // printf("\n");
   for(int i = 0; i < n; i++){
     absError[i] = (values[i]-vec[i])/(values[i]);
   }
-   // printf("error: \n");
+    // printf("error: \n");
   for(int i = 0; i < n; i++){
       if(absError[i] < 0.005){
         count++;
       }
-       // printf(" %f ", absError[i]);
+        // printf(" %f ", absError[i]);
 
   }
-  // printf("\n");
+   // printf("\n");
   // printf("count: %d\n", count);
    for(int i = 0; i < n; i++){
     vec[i] = values[i];
    }
   return count == n;
 }
+
+bool absRelApproxErrorGauss(double *vec, double values[], int n){
+  double absError[n];
+  // printf("vec: \n");
+  // for(int i = 0; i < n; i++){
+  //     printf(" %f ", vec[i]);
+  // }
+  // printf(" \n");
+  // printf("values: \n");
+  // for(int i = 0; i < n; i++){
+  //     printf(" %f ", values[i]);
+  // }
+  int count = 0;
+  // printf("\n");
+  for(int i = 0; i < n; i++){
+    absError[i] = (vec[i]-values[i])/(vec[i]);
+  }
+    // printf("error: \n");
+  for(int i = 0; i < n; i++){
+      if(absError[i] < 0.005){
+        count++;
+      }
+        // printf(" %f ", absError[i]);
+
+  }
+   // printf("\n");
+  // printf("count: %d\n", count);
+   for(int i = 0; i < n; i++){
+    values[i] = vec[i];
+   }
+  return count == n;
+}
+
 void JacobiIteration(double ** matrix,double *vec, int n, int ns){
   printf("Jacobi Iteration\n");
     double sumCur = 0.0;
@@ -105,7 +139,7 @@ void JacobiIteration(double ** matrix,double *vec, int n, int ns){
     // printf("\n");
    }
     // vec[0]=0.0;
-  isLess = absRelApproxError(vec, values,n);
+  isLess = absRelApproxErrorJacobi(vec, values,n);
   // if(isLess){
   //   printf("true\n");
   // }else{
@@ -115,7 +149,7 @@ void JacobiIteration(double ** matrix,double *vec, int n, int ns){
   iter++;
   // printf("-------------------------------\n");
   }
-  printf("iter: %d\n",iter);
+  // printf("iter: %d\n",iter);
   if(iter-1 < 99){
   for(int i = 0; i < n; i++){
     printf("%0.4f ", vec[i]);
@@ -126,8 +160,76 @@ void JacobiIteration(double ** matrix,double *vec, int n, int ns){
  printf("\n");
 }
 
-void GaussSeidel(){
+void GaussSeidel(double ** matrix,double *vec, int n, int ns){
+printf("Gauss-Seidel iteration\n");
+    double sumCur = 0.0;
+    double div = 0.0;
+    double values[n];
+    int iter = 0;
+     bool isLess = false;
+  while(iter < 100 && !isLess){
+    // printf("-------------------------------\n");
+    // printf("iter: %d\n", iter);
+    for(int index = 0; index < n; index++){
+      values[index] = 0.0;
+    }
+   for(int i = 0; i < n; i++){
+     // printf("Iter: %d \n", i);
+    for(int j = ns - 1; j >= 0; j--){
+         if(ns-1!= j && j!=i){
+          // printf(" j:%d  vec:%f ",j, vec[j]);
+           // printf("before sumCur:%f   %f ",sumCur,  matrix[i][j]);
+           // printf("sum before: %f\n", sumCur);
+           // printf("  (-1) * %f * %f \n",vec[j], matrix[i][j]);
+           sumCur+= ((-1)*matrix[i][j])*(vec[j]);
+            // printf(" j:%d  vec:%0.f %0.f ",j, vec[j], matrix[i][j]);
+           // printf("sum after: %f\n", sumCur);
 
+         }else{
+          if(ns-1 == j){
+               sumCur = matrix[i][j];
+            // printf(" ns-1 == j %d  %0.f ", j, matrix[i][j]);
+          }else if(j == i){
+             div = matrix[i][j];
+             //printf("after sumCur:%f   %f ",sumCur,  matrix[i][j]);
+             // sumCur/= matrix[i][j];
+          }
+         }
+    }
+    double res = sumCur/div;
+    values[i]=vec[i];
+    // printf("\n");
+    // printf("res: %f\n", res);
+    vec[i] = res;
+    // printf("\n");
+      // printf("iter: %d\n", i);
+  // for(int i = 0; i < n; i++){
+  //   printf("%0.4f ", vec[i]);
+  //  }
+    sumCur = 0.0;
+    res = 0.0;
+     // printf("\n");
+   }
+    // vec[0]=0.0;
+   isLess = absRelApproxErrorGauss(vec, values,n);
+  // if(isLess){
+  //   printf("true\n");
+  // }else{
+  //   printf("false\n");
+  // }
+  //   printf("vector result\n");
+   iter++;
+  // printf("-------------------------------\n");
+   }
+ //  printf("iter: %d\n",iter);
+   if(iter-1 < 99){
+  for(int i = 0; i < n; i++){
+    printf("%0.4f ", vec[i]);
+   }
+ }else{
+  printf("no convergence");
+ }
+ printf("\n");
 } 
 
 
@@ -232,9 +334,8 @@ int main()
 	}
   isDiagonalDominant(matrix,n);
   JacobiIteration(matrix, vec, n,ns);
-
-
-
+  GaussSeidel(matrix, vec, n, ns);
+  free(vec);
 	return 0;
 }
 
