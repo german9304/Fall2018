@@ -14,38 +14,20 @@ int getBit(int x, int i){
   int b = x << i;
   return b & x;
 }
-void leftRec(int left){
-   if(left == 0){
-     return;
-   }
-   cout << "res before: "<< left <<endl;
-    int res = left/2;
-   leftRec(res);
-   leftRec(res);
-   cout << "res after: "<< left <<endl;
-}
-void rightRec(int right, int bits){
-   if(bits == 0){
-     return;
-   }
-   // cout << "res before: "<< bits <<endl;
-   int res = bits/2;
-   lefttRec(res);
-   // cout << "res after: "<< bits <<endl;
-}
+
 int countOnes(unsigned int _ui, int bits){
- if(length == 1){
+ if(bits == 1){
 //    int res  = getBit(ui, 1);
 //    cout <<"ui: " <<  ui <<endl;
-    return ui;
+    return _ui;
   }
 //  cout << "length: " << length <<endl;
-  unsigned int ld = length/2;
-  unsigned int lres = ui >> ld;
+  unsigned int ld = bits/2;
+  unsigned int lres = _ui >> ld;
   int leftBits = countOnes(lres, ld);
 //  cout << "ll: " <<leftBits <<endl;
 //  cout << "ll: " <<lres <<" " <<  ui <<" " <<  length <<endl;
-  unsigned int res =  ui << ld;
+  unsigned int res =  _ui << ld;
   unsigned int sh  = 0;
   unsigned int num = 0;
   if(ld < 16){
