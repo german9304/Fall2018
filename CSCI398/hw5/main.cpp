@@ -10,23 +10,17 @@ using std::cerr;
 
 typedef unsigned int _ui;
 
-int getBit(int x, int i){
-  int b = x << i;
-  return b & x;
+int getBit(unsigned  int ui, int length){
+  return ui & (1<<length);
 }
 
 int countOnes(unsigned int _ui, int bits){
  if(bits == 1){
-//    int res  = getBit(ui, 1);
-//    cout <<"ui: " <<  ui <<endl;
     return _ui;
   }
-//  cout << "length: " << length <<endl;
   unsigned int ld = bits/2;
   unsigned int lres = _ui >> ld;
   int leftBits = countOnes(lres, ld);
-//  cout << "ll: " <<leftBits <<endl;
-//  cout << "ll: " <<lres <<" " <<  ui <<" " <<  length <<endl;
   unsigned int res =  _ui << ld;
   unsigned int sh  = 0;
   unsigned int num = 0;
@@ -34,29 +28,58 @@ int countOnes(unsigned int _ui, int bits){
     sh =  (1<< (ld*2))-1;
     num = (res & sh) >> ld;
   }else{
-//    cout <<"res inside: " << res <<endl;
      num =  res >> 16;
   }
-
-//  cout << ui << " " << ld << " temp: " << temp <<endl;
-//  cout << "num: " << num <<endl;
-//  cout << "res: " << res <<endl;
-//  cout << "sh: " << sh <<endl;
   int rightBits = countOnes(num, ld);
-
-//  int sum = 0;
-//  if(leftBits){
-//    sum++;
-//  }
-//  if(rightBits){
-//    sum++;
-//  }
   return rightBits + leftBits;
 
 }
 
-void printDif(unsigned int _ui,unsigned int y){
+void oddsEvens(unsigned int _ui,unsigned int &evens,unsigned int &odds){
+  for(unsigned int i = 0; i < 32; i++){
+    unsigned int bit = getBit(_ui, i);
+    if(i%2 == 0){
+      evens+= bit;
+    }else{
+      odds+= bit;
+    }
+  }
+}
 
+int tuples(unsigned int _ui,unsigned int y){
+  unsigned int num_1 = 0;
+  unsigned int num_2 = 0;
+  unsigned int total_sum = 0;
+  for(int i = 0; i < 32; i++){
+    unsigned int res_1 = getBit(_ui,i);
+    unsigned int res_2 = getBit(y,i);
+    num_1+=res_2;
+    num_2+=res_1;
+    if(i % 2 == 1){
+    unsigned int res = num_2 ^ num_1;
+      if(res){
+        total_sum++;
+      }
+      num_1 = 0;
+      num_2 = 0;
+    }
+  }
+  return total_sum;
+}
+
+void printDif(unsigned int _ui,unsigned int y){
+  unsigned odds_1 = 0;
+  unsigned int evens_1 = 0;
+  unsigned int odds_2 = 0;
+  unsigned int evens_2 = 0;
+  oddsEvens(_ui,evens_1,odds_1);
+  oddsEvens(y,evens_2,odds_2);
+  unsigned int evenRes= evens_1 ^ evens_2;
+  unsigned int oddRes = odds_1 ^ odds_2;
+  int onesOdd = countOnes(oddRes, 32);
+  int onesEven = countOnes(evenRes, 32);
+  int totalTuples = tuples(_ui, y);
+  cout <<onesOdd << " " << onesEven  << " " <<totalTuples << endl;
 }
 
 void flipTwo(unsigned int _ui){
