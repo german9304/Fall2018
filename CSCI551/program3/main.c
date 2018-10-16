@@ -31,49 +31,6 @@ void isDiagonalDominant(double ** matrix, int n){
       count++;
     }
   }
-  // printf("before\n");
-  // for(int i = 0; i < n; i++){
-  //      for(int j = 0; j < n; j++){
-  //       printf(" %f ",matrix[i][j]);
-  //      }
-  //      printf("\n");
-  //   }
-     // double row1[n];
-     // double row2[n];
-     // for(int i = 0; i < n;i++){
-     //   row1[i] = 0.0;
-     //   row2[i] = 0.0;
-     // }
-     // for(int i = 0; i < n; i++){
-     //   for(int j = 0; j < n; j++){
-     //      if(i == 0){
-     //       row1[j] = matrix[i][j];
-     //      }
-     //      if(i == n-1){
-     //       row2[j]= matrix[i][j];
-     //      }
-     //   }
-       // printf("\n");
-    // }
-     // printf("\n");
-     //   printf("after\n");
-      // for(int i = 0; i < n;i++){
-      //  matrix[n-1][i] = row1[i];
-       // printf(" %f ",row1[i]);
-     // }
-       // printf("\n");
-        // for(int i = 0; i < n;i++){
-        //   matrix[0][i] = row2[i];
-       // printf(" %f ",row2[i]);
-     // }
-// for(int i = 0; i < n; i++){
-//        for(int j = 0; j < n; j++){
-        // printf(" %f ",matrix[i][j]);
-       // }
-       // printf("\n");
-    // }
-     // printf("\n");
-
   if(count == n){
     printf("The system is diagonally dominant\n");
   }else{
@@ -416,10 +373,9 @@ int main()
     createMatrix(matrix,n,ns);
 	}else if(n > 10){
     // printf("more than 10\n");
-    createRandomMatrix(matrix,n ,ns);
+   createRandomMatrix(matrix,n ,ns);
      //printMatrix(matrix, n);
 	}
-  // printf("\n");
   isDiagonalDominant(matrix,n);
   initVector(vec, n);
   JacobiIteration(matrix, vec, n,ns);
