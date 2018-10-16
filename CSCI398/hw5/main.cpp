@@ -83,7 +83,52 @@ void printDif(unsigned int _ui,unsigned int y){
 }
 
 void flipTwo(unsigned int _ui){
-
+ vector<int> bits;
+  for(int i = 0; i < 32; i++){
+    unsigned int bit = getBit(_ui, i);
+//    cout << bit << " ";
+    if(!bit){
+      bits.push_back(i);
+    }
+  }
+//  cout <<endl;
+//  for(int i = 0; i < bits.size();i++){
+//    cout << bits[i] << " ";
+//  }
+//  cout <<endl;
+  int max = -1;
+  int iter = 0;
+  int cursum = 0;
+  for(int i = 0; i < 32; i++){
+    if(bits[iter] == i && iter < bits.size()){
+       //cout <<iter<< " ";
+      if(iter == 2){
+//        cout << i << " "<<iter << endl;
+//        break;
+        cursum = i;
+        if(i > max){
+          max = i;
+        }
+      //cout << i << " "<<cursum<< " " << iter << endl;
+      }else if(iter > 2){
+       // cout << max << " " << iter << " " << i << endl;
+        int s =(i-1) - (bits[iter-3]);
+      //  cout <<i << " " << "sum: " <<  s << " " << iter << " " << bits[iter-3] << endl;
+        if(s > max){
+          max = s;
+        }
+       // break;
+      }
+      iter++;
+     }
+  }
+  int lastSum = (31-bits[iter-3]);
+  if(lastSum > max){
+    max = lastSum;
+  }
+  cout <<endl;
+  cout << "max: " << max <<endl;
+//  cout <<endl;
 }
 int main(){
 
