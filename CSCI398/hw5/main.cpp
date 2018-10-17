@@ -1,12 +1,8 @@
 #include<string>
 #include<iostream>
 #include<bitset>
-using std::bitset;
-using std::string;
-using std::cout;
-using std::endl;
-using std::cin;
-using std::cerr;
+#include <vector>
+using namespace std;
 
 typedef unsigned int _ui;
 
@@ -91,69 +87,51 @@ void flipTwo(unsigned int _ui){
       bits.push_back(i);
     }
   }
-//  cout <<endl;
-//  for(int i = 0; i < bits.size();i++){
-//    cout << bits[i] << " ";
-//  }
-//  cout <<endl;
   int max = -1;
-  int iter = 0;
-  int cursum = 0;
+  unsigned int iter = 0;
   int index_1 = 0;
   int index_2 = 0;
-  if(bits.size() && bits.size() > 1){
+  unsigned int size = bits.size();
+  if(size && size > 1){
   for(int i = 0; i < 32; i++){
-     if(bits[iter] == i && iter < bits.size()){
-       //cout <<iter<< " ";
+     if(bits[iter] == i && iter < size){
       if(iter == 2){
-//        cout << i << " "<<iter << endl;
-//        break;
-        cursum = i;
         if(i > max){
           max = i;
-         // cout <<bits[iter-1] << " " << bits[iter-2] << " " << max << endl;
           index_1 = bits[iter-2];
           index_2 = bits[iter-1];
         }
-      //cout << i << " "<<cursum<< " " << iter << endl;
       }else if(iter > 2){
-        //cout << max << " " << iter << " " << i << endl;
         int s =(i-1) - (bits[iter-3]);
-      //  cout <<i << " " << "sum: " <<  s << " " << iter << " " << bits[iter-3] << endl;
         if(s > max){
           max = s;
           index_1 = bits[iter-2];
           index_2 = bits[iter-1];
-        //  cout << max << " s: " << s << " " << i << endl;
         }
-       // break;
       }
       iter++;
     }
   }
   }
-if(bits.size() && bits.size() > 1){
+if(size && size > 1){
   int lastSum = (31-bits[iter-3]);
   if(lastSum > max){
-    //cout <<bits[iter-1] << " s: " << bits[iter-2] << " " << max << endl;
-    cout << "true" <<endl;
     max = lastSum;
     index_1 = bits[iter-2];
     index_2 = bits[iter-1];
     }
    }
-  if(bits.size() == 1){
+  if(size == 1){
     index_1 = bits[0];
     index_2 = -1;
     max = 32;
   }
-  if(!bits.size()){
+  if(!size){
     index_1 = -1;
     index_2 = -1;
     max = 32;
   }
   cout <<index_1 << " " << index_2 << " " << max <<endl;
-//  cout <<endl;
 }
 int main(){
 
