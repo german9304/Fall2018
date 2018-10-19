@@ -81,7 +81,6 @@ void isDiagonalDominant(double **matrix, int n)
 * @return boolean if ARAE is less than 0.005 return true, 
 *         otherwise return false. 
 */
-
 bool absRelApproxErrorJacobi(double *vec, double values[], int n)
 {
   double absError[n];
@@ -126,7 +125,6 @@ bool absRelApproxErrorJacobi(double *vec, double values[], int n)
 * @return boolean if ARAE is less than 0.005 return true, 
 *         otherwise return false. 
 */
-
 bool absRelApproxErrorGauss(double *vec, double values[], int n)
 {
   double absError[n];
@@ -170,7 +168,6 @@ bool absRelApproxErrorGauss(double *vec, double values[], int n)
 *
 * @return none 
 */
-
 void JacobiIteration(double **matrix, double *vec, int n, int ns)
 {
   printf("Jacobi Iteration\n");
@@ -239,7 +236,6 @@ void JacobiIteration(double **matrix, double *vec, int n, int ns)
 *
 * @return none 
 */
-
 void GaussSeidel(double **matrix, double *vec, int n, int ns)
 {
   printf("Gauss-Seidel iteration\n");
@@ -292,14 +288,16 @@ void GaussSeidel(double **matrix, double *vec, int n, int ns)
   {
     printf("no convergence\n");
   }//else
-}
+}//GaussSeidel
 
 /*
 * 
-* Init Matrix and Vector 
+* Allocates memory for the inner vector inside the Matrix
 * 
-* @param matrix , vec, n
+* @param matrix is a double pointer array
 *
+* @param n of the double pointer matrix 
+* 
 * @return none 
 *
 */
@@ -310,21 +308,18 @@ void initMatrixVector(double **matrix, int n)
     matrix[i] = (double *)malloc(sizeof(double *) * n);
   }//for
 }//initMatrixVector
+
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Prints the matrix generated 
+* by user when n is less than 11
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param matrix is a double pointer array
 *
-* @param matrix_2 is the matrix that will get tranpose.
-*
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
-*
+* @param n of the double pointer matrix 
+* 
 * @return none 
+*
 */
 void printMatrix(double **matrix, int n)
 {
@@ -340,19 +335,19 @@ void printMatrix(double **matrix, int n)
 
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Generates the matrix of type double 
+*  with numbers input by the user 
+*  when n is less than 11.
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param matrix is a double pointer array
 *
-* @param matrix_2 is the matrix that will get tranpose.
+* @param n is size of the double pointer matrix 
+* 
+* @param ns is the size of the double pointer matrix 
 *
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
 *
 * @return none 
+*
 */
 void createMatrix(double **matrix, int n, int ns)
 {
@@ -365,21 +360,23 @@ void createMatrix(double **matrix, int n, int ns)
   }//for
 }//createMatrix
 
+
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Generates the random matrix of type double 
+* when size is greater than 10, 
+* in the range -1.0e3, 1.0e3 if not on the diagonal
+* and range 2.0e6, 4.0e6 if non the main diagonal
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param matrix is a double pointer array
 *
-* @param matrix_2 is the matrix that will get tranpose.
+* @param n is size of the double pointer matrix 
+* 
+* @param ns is the size of the double pointer matrix 
 *
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
 *
 * @return none 
+*
 */
 void createRandomMatrix(double **matrix, int n, int ns)
 {
@@ -400,21 +397,18 @@ void createRandomMatrix(double **matrix, int n, int ns)
     }//for
   }//for
 }//createRandomMatrix
+
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Initializes the starting approximation vector
+* with numbers of 1.0 of type double
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param vec is an array of type double
 *
-* @param matrix_2 is the matrix that will get tranpose.
-*
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
-*
+* @param n of the double pointer matrix 
+* 
 * @return none 
+*
 */
 void initVector(double *vec, int n)
 {
@@ -425,19 +419,15 @@ void initVector(double *vec, int n)
 }//initVector
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Prints the vector result 
+*  from Jacobi and Gauss methods
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param vec is an array of type double
 *
-* @param matrix_2 is the matrix that will get tranpose.
-*
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
-*
+* @param n of the double pointer matrix 
+* 
 * @return none 
+*
 */
 void printVector(double *vec, int n)
 {
