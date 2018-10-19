@@ -161,10 +161,12 @@ bool absRelApproxErrorGauss(double *vec, double values[], int n)
 * @param matrix is the matrix where Jacobi Iteration method
 *        will be calculated
 *
-* @param vec is the matrix that will get tranpose.
+* @param vec is an array of doubles,
+*        that contains the starting approximation of 1's
 *
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
+* @param n is the size of the matrix 
+*  
+* @param n is the size of the matrix minus 1
 *
 * @return none 
 */
@@ -222,20 +224,22 @@ void JacobiIteration(double **matrix, double *vec, int n, int ns)
 
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Calculates the Gauss-Seidel iteration method,
+* on the given matrix. 
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param matrix is the matrix where Gauss-Seidel iteration method
+*        will be calculated
 *
-* @param matrix_2 is the matrix that will get tranpose.
+* @param vec is an array of doubles,
+*        that contains the starting approximation of 1's
 *
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
+* @param n is the size of the matrix 
+*  
+* @param n is the size of the matrix minus 1
 *
 * @return none 
 */
+
 void GaussSeidel(double **matrix, double *vec, int n, int ns)
 {
   printf("Gauss-Seidel iteration\n");
@@ -443,6 +447,7 @@ void printVector(double *vec, int n)
   }//for
   printf("\n");
 }//printVector
+
 
 int main()
 {
