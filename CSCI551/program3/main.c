@@ -13,18 +13,13 @@
 #include <math.h>
 
 /*
-* 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
-* 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
 *
-* @param matrix_2 is the matrix that will get tranpose.
+* Tests if the matrix is diagonal dominant.
+* 
+* @param n size of the matrix to be tested.
 *
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
+* @param matrix is the matrix that will be tested if
+*       it has diagonal dominant.
 *
 * @return none 
 */
@@ -62,25 +57,30 @@ void isDiagonalDominant(double **matrix, int n)
   }
   else
   {
-    printf("The system is not diagonally dominant %d %d\n", count, greater);
-  } //if
-}
+    printf("The system is not diagonally dominant\n");
+  } //else
+}//isDiagonalDominant
+
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Calculates if the absolute relative approximate error 
+*   from Jacobi Iteration method is less than 0.005. 
+*   After the ith iteration from Jacobi method the vector vec and values 
+*   contain the new and old numbers to calulcate the (ARAE). 
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param n size of the matrix.
 *
-* @param matrix_2 is the matrix that will get tranpose.
+* @param vec is the vector that contains the previous numbers
+*        obtained by running the ith iteration from Jacobi Iteration method, 
+*        so these numbers get compared with 0.005. 
 *
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
+* @param values is an array of doubles that contains the new values 
+*        obtained by running the ith iteration from Jacobi Iteration method. 
 *
-* @return none 
+* @return boolean if ARAE is less than 0.005 return true, 
+*         otherwise return false. 
 */
+
 bool absRelApproxErrorJacobi(double *vec, double values[], int n)
 {
   double absError[n];
@@ -88,36 +88,43 @@ bool absRelApproxErrorJacobi(double *vec, double values[], int n)
   for (int i = 0; i < n; i++)
   {
     absError[i] = fabs((values[i] - vec[i]) / (values[i]));
-  }
+  }//for
   for (int i = 0; i < n; i++)
   {
     if (absError[i] < 0.005)
     {
       count++;
     }
-  }
+  }//for
   for (int i = 0; i < n; i++)
   {
     vec[i] = values[i];
-  }
+  }//for
   return count == n;
-}
+}//absRelApproxErrorJacobi
+
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Calculates if the absolute relative approximate error 
+*   from Gauss-Seidel Iteration method is less than 0.005. 
+*   After the ith iteration from Gauss-Seidel method the vector vec and values 
+*   contain the new and old numbers to calulcate the (ARAE). 
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param n size of the matrix.
 *
-* @param matrix_2 is the matrix that will get tranpose.
 *
-* @param transpose_matrix matrix will be the result of
-* the tranpose of matrix_2. 
+* @param values is an array of doubles that contains the new values 
+*        obtained by running the ith iteration from Gauss-Seidel Iteration method.
 *
-* @return none 
+*
+* @param vec is the vector that contains the previous numbers
+*        obtained by running the ith iteration from Gauss-Seidel Iteration method. 
+*        so these numbers get compared with 0.005. 
+*
+* @return boolean if ARAE is less than 0.005 return true, 
+*         otherwise return false. 
 */
+
 bool absRelApproxErrorGauss(double *vec, double values[], int n)
 {
   double absError[n];
@@ -142,23 +149,24 @@ bool absRelApproxErrorGauss(double *vec, double values[], int n)
     values[i] = vec[i];
   }
   return count == n;
-}
+}//absRelApproxErrorGauss
+
 /*
 * 
-* Tranpose the second matrix from the multiplication,
-* this ensures that data is aligned, 
-* so the compiler can vectorize it. 
+* Calculates the Jacobi Iteration method,
+* on the given matrix. 
 * 
-* @param size is the length of the original matrix, 
-*  that will get tranpose. 
+* @param matrix is the matrix where Jacobi Iteration method
+*        will be calculated
 *
-* @param matrix_2 is the matrix that will get tranpose.
+* @param vec is the matrix that will get tranpose.
 *
 * @param transpose_matrix matrix will be the result of
 * the tranpose of matrix_2. 
 *
 * @return none 
 */
+
 void JacobiIteration(double **matrix, double *vec, int n, int ns)
 {
   printf("Jacobi Iteration\n");
@@ -208,7 +216,7 @@ void JacobiIteration(double **matrix, double *vec, int n, int ns)
   {
     printf("no convergence\n");
   }//else
-}
+}//JacobiIteration
 
 /*
 * 
@@ -239,7 +247,7 @@ void GaussSeidel(double **matrix, double *vec, int n, int ns)
     for (int index = 0; index < n; index++)
     {
       values[index] = 0.0;
-    }
+    }//for
     for (int i = 0; i < n; i++)
     {
       for (int j = ns - 1; j >= 0; j--)
@@ -257,18 +265,18 @@ void GaussSeidel(double **matrix, double *vec, int n, int ns)
           else if (j == i)
           {
             div = matrix[i][j];
-          }
-        }
-      }
+          }//else if
+        }//else
+      }//for
       double res = sumCur / div;
       values[i] = vec[i];
       vec[i] = res;
       sumCur = 0.0;
       res = 0.0;
-    }
+    }//for
     isLess = absRelApproxErrorGauss(vec, values, n);
     iter++;
-  }
+  }//while
   if (iter - 1 < 99)
   {
     printf("convergence\n");
@@ -277,7 +285,7 @@ void GaussSeidel(double **matrix, double *vec, int n, int ns)
   else
   {
     printf("no convergence\n");
-  }
+  }//else
 }
 
 /*
@@ -294,8 +302,8 @@ void initMatrixVector(double **matrix, int n)
   for (int i = 0; i < n; i++)
   {
     matrix[i] = (double *)malloc(sizeof(double *) * n);
-  }
-}
+  }//for
+}//initMatrixVector
 /*
 * 
 * Tranpose the second matrix from the multiplication,
@@ -319,21 +327,27 @@ void printMatrix(double **matrix, int n)
     for (int j = 0; j < n + 1; j++)
     {
       printf("%0.4lf ", matrix[i][j]);
-    }
+    }//for
     printf("\n");
-  }
-}
+  }//for
+}//printMatrix
 
 /*
 * 
-* Create Matrix and Vector 
+* Tranpose the second matrix from the multiplication,
+* this ensures that data is aligned, 
+* so the compiler can vectorize it. 
 * 
-* @param matrix, ns, n
+* @param size is the length of the original matrix, 
+*  that will get tranpose. 
+*
+* @param matrix_2 is the matrix that will get tranpose.
+*
+* @param transpose_matrix matrix will be the result of
+* the tranpose of matrix_2. 
 *
 * @return none 
-*
 */
-
 void createMatrix(double **matrix, int n, int ns)
 {
   for (int i = 0; i < n; i++)
@@ -341,18 +355,25 @@ void createMatrix(double **matrix, int n, int ns)
     for (int j = 0; j < ns; j++)
     {
       scanf("%lf", &matrix[i][j]);
-    }
-  }
-}
+    }//for
+  }//for
+}//createMatrix
 
 /*
 * 
-* Create Random Matrix and Vector 
+* Tranpose the second matrix from the multiplication,
+* this ensures that data is aligned, 
+* so the compiler can vectorize it. 
 * 
-* @param matrix, ns, n
+* @param size is the length of the original matrix, 
+*  that will get tranpose. 
+*
+* @param matrix_2 is the matrix that will get tranpose.
+*
+* @param transpose_matrix matrix will be the result of
+* the tranpose of matrix_2. 
 *
 * @return none 
-*
 */
 void createRandomMatrix(double **matrix, int n, int ns)
 {
@@ -369,26 +390,33 @@ void createRandomMatrix(double **matrix, int n, int ns)
       else
       {
         matrix[i][j] = (drand48() * (1000 - (-1000) + 1)) + -1000;
-      }
-    }
-  }
-}
+      }//else
+    }//for
+  }//for
+}//createRandomMatrix
 /*
 * 
-* Create Random Matrix and Vector 
+* Tranpose the second matrix from the multiplication,
+* this ensures that data is aligned, 
+* so the compiler can vectorize it. 
 * 
-* @param matrix, ns, n
+* @param size is the length of the original matrix, 
+*  that will get tranpose. 
+*
+* @param matrix_2 is the matrix that will get tranpose.
+*
+* @param transpose_matrix matrix will be the result of
+* the tranpose of matrix_2. 
 *
 * @return none 
-*
 */
 void initVector(double *vec, int n)
 {
   for (int i = 0; i < n; i++)
   {
     vec[i] = 1.0;
-  }
-}
+  }//for
+}//initVector
 /*
 * 
 * Tranpose the second matrix from the multiplication,
@@ -410,9 +438,9 @@ void printVector(double *vec, int n)
   for (int i = 0; i < n; i++)
   {
     printf("%0.4lf ", vec[i]);
-  }
+  }//for
   printf("\n");
-}
+}//printVector
 
 int main()
 {
