@@ -74,8 +74,9 @@ void isDiagonalDominant(double **matrix, int n)
 *        obtained by running the ith iteration from Jacobi Iteration method, 
 *        so these numbers get compared with 0.005. 
 *
-* @param values is an array of doubles that contains the new values 
-*        obtained by running the ith iteration from Jacobi Iteration method. 
+* @param values is an array of doubles that contains the starting approximation 1's 
+*        and the new values obtained by running the ith iteration 
+*        from Jacobi Iteration method. 
 *
 * @return boolean if ARAE is less than 0.005 return true, 
 *         otherwise return false. 
@@ -113,8 +114,9 @@ bool absRelApproxErrorJacobi(double *vec, double values[], int n)
 * @param n size of the matrix.
 *
 *
-* @param values is an array of doubles that contains the new values 
-*        obtained by running the ith iteration from Gauss-Seidel Iteration method.
+* @param values is an array of doubles that contains the starting approximation 1's
+*        and the new values obtained by running the ith iteration
+*        from Gauss-Seidel Iteration method.
 *
 *
 * @param vec is the vector that contains the previous numbers
