@@ -1,9 +1,21 @@
+
+/* 
+ * File:   tmin.c
+ * Author: German Razo
+ *
+ * part 1
+ * 
+ * Purpose:  
+ *
+ *
+ */
 #include <stdio.h>
 #include <math.h> 
 
 
-double trapMethod(int left_endpt, int right_endpt, int count);
+double trapMin(int left_endpt, int right_endpt, int count);
 double f(double x);
+double absRelTrueErr(double prev, double cur);
 
 
 int main(){
@@ -15,7 +27,7 @@ int main(){
     return 0;
 }
 /*
- * Function:     trapMethod
+ * Function:     trapMin
  * Purpose:      Serial function for estimating a definite integral 
  *               using the trapezoidal rule
  * Input args:   left_endpt
@@ -26,11 +38,17 @@ int main(){
  *               left_endpt to right_endpt using trap_count
  *               trapezoids
  */
-double trapMethod(int left_endpt, int right_endpt, int count){
+double trapMin(int left_endpt, int right_endpt, int count){
 	left_endpt++;
 	right_endpt++;
 	count++;
 	return 0.0;
+}
+double absRelTrueErr(double prev, double cur){
+	//stoping criteria .000000000000005
+	prev = 0.0;
+	cur = 0.0;
+   return 0.4;
 }
 /*
  * Function:     f
