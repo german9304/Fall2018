@@ -33,13 +33,13 @@ If your midpoint is less than the answer (or in our case the ARTE is greater tha
 #include <stdbool.h>
 
 
-long double trapMin(long double a, long double b, unsigned long long int count);
+long double trap(long double a, long double b, unsigned long long int count);
 double initTrap(long double a, long double b, int count);
 long double f(long double x);
 bool absRelTrueErr(long double t_v, long double v_a);
 long double height(long double a, long double b, unsigned long long int);
 long double searchMin(long double a, long double b, int n, long double true_value, long double t_m);
-void testTrap(long double a, long double b, unsigned long long int n, long double true_value);
+void trapMin(long double a, long double b, unsigned long long int n, long double true_value);
 long double bisecMethod(long double a, long double b, long double fl, long double cel, long double t_v);
 long double absrte(long double t_v, long double aprx);
 void print();
@@ -47,21 +47,24 @@ void print();
 int main(void){
     long double a, b;
     unsigned long long int t;
-    scanf("%Lf %Lf  %lld",&a,&b,&t);
+    scanf("%Lf",&a);
+    scanf("%Lf",&b);
+    scanf("%lld",&t);
+   // printf("after\n");
     printf("a:%Lf  b:%Lf  t:%llu\n",a,b,t);
     long double t_v = 4754.0192288588181366L;
     //long double stop_criteria = .000000000000005;
     ;
     //long double res = trapMin(a, b, t);
-  //  printf("first res: %.19Le\n", res);
-    testTrap(a, b, t, t_v);
+   //printf("first res: %.19Le\n", res);
+    trapMin(a, b, t, t_v);
     return 0;
 }
 
-void testTrap(long double a,long double  b, unsigned long long int n, long double t_v){
+void trapMin(long double a,long double  b, unsigned long long int n, long double t_v){
  bool isLess = false;
   while(!isLess){
-     long double t_r = trapMin(a, b, n);
+     long double t_r = trap(a, b, n);
      isLess = absRelTrueErr(t_v, t_r);
       n = (unsigned long long) n * 2;
       printf("before n: %llu\n", n);
@@ -84,7 +87,7 @@ long double absrte(long double t_v, long double aprx){
 long double bisecMethod(long double a, long double b, long double fl, long double cel, long double t_v){
     long double mid = (cel + fl) / 2.0;
     printf("flor: %Lf cel: %Lf  mid: %Lf \n",fl, cel, mid);
-    long double t_r = trapMin(a, b, mid);
+    long double t_r = trap(a, b, mid);
     printf("tm: %.14Le\n",t_r);
     long double abserr =  absrte(t_v, t_r);
     long double stc = .00000000000005L;
@@ -148,7 +151,7 @@ void print(){
  *               left_endpt to right_endpt using trap_count
  *               trapezoids
  */
-long double trapMin(long double a, long double b, unsigned long long int n){
+long double trap(long double a, long double b, unsigned long long int n){
 	long double approx = (f(b) + f(a)) / 2.0;
 	//printf("approx: %.14Le\n", approx);
 	for(unsigned int i = 1; i <= n - 1; i++){
