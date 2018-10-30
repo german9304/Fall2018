@@ -7,7 +7,8 @@
  * 
  * Purpose:  
  *
-0 100 55500000
+  0 100 55500000
+  1.3992905500000000000
  *
  */
 
@@ -34,6 +35,7 @@ void print();
 int main(void){
     long double a, b;
     unsigned  int t;
+    printf("Enter a, b, and n\n");
     scanf("%Lf",&a);
     scanf("%Lf",&b);
     scanf("%d",&t);
@@ -73,7 +75,7 @@ long double bisecMethod(long double a,
 {
     long double mid = (cel + fl) / 2.0;
     if(fl == (unsigned int) mid){
-       return mid;
+       return fl;
     }
     long double t_r = trap(a, b, mid);
     //printf("t_r: %.13Le\n", t_r);
