@@ -56,6 +56,7 @@ void trapMin(long double a,long double  b, unsigned int n, long double t_v){
       printf("n:%d absrte:%Le t_r:%.13Le\n",n, absre, t_r);
       if(absre <= .00000000000005L){
         isLess = true;
+        printf("second part\n");
         long double i_r = 0.0;
         long double absrte = 0.0;
         long double t_m = bisecMethod(a, b, &absrte, &i_r,a,n/2, t_v);
@@ -100,12 +101,10 @@ long double bisecMethod(long double a,
   long double t_v)
 {
     long double mid = (cel + fl) / 2.0;
-    if(fl == (unsigned int) mid){
-       return fl;
-    }
+
     long double t_r = trap(a, b, mid);
     printf("t_r: %.13Le\n", t_r);
-    printf("fl:%u  cel:%u\n", fl, cel);
+    printf("fl:%u  cel:%u mid:%.13Lf\n", fl, cel, mid);
     long double abserr =  absrte(t_v, t_r);
     printf("abserr %.13Le\n", abserr);
     long double stc = .00000000000005L;
@@ -113,11 +112,26 @@ long double bisecMethod(long double a,
      *i_r = t_r;
     if(abserr  > stc){
       printf("T less\n");
-     return bisecMethod(a, b, abstr, i_r, mid, cel,  t_v);
+     return bisecMethod(a, b, abstr, i_r, fl, mid,  t_v);
     }else if(stc > abserr){
       printf("T greater\n");
-      return bisecMethod(a, b, abstr ,i_r, fl, mid, t_v);
+      return bisecMethod(a, b, abstr ,i_r, mid, cel, t_v);
     }
+    //   if(t_r == 4754.0192288587){
+    //     printf("stop t_r %.13Le\n", t_r);
+    //     return cel;
+    // }
+    //  if(t_r > 4754.0192288588){
+    //   mid /= 2;
+    //   printf("less\n");
+    //   return bisecMethod(a, b, abstr, i_r, mid, cel,  t_v);
+    //  }else if(4754.0192288588 > t_r){
+    //   printf("greater\n");
+    //   mid *= 2;
+    //   printf("mid: %Le\n",mid);
+    //     return bisecMethod(a, b, abstr ,i_r, fl, mid, t_v);
+    //  }
+
       return fl;
 }
 
