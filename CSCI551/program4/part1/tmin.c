@@ -7,8 +7,12 @@
  * 
  * Purpose:  
  *
+ 43000000
   0 100 55500000
+  5500000
+  13107200   5.701955e-14
   1.3992905500000000000
+  /26999999 - 50000000
  *
  */
 
@@ -45,23 +49,45 @@ int main(void){
 }
 
 void trapMin(long double a,long double  b, unsigned int n, long double t_v){
-  bool isLess = false;
+ bool isLess = false;
   while(!isLess){
      long double t_r = trap(a, b, n);
      long double absre = absrte(t_v, t_r);
-      n =  n * 2;
+      printf("n:%d absrte:%Le t_r:%.13Le\n",n, absre, t_r);
       if(absre <= .00000000000005L){
         isLess = true;
         long double i_r = 0.0;
         long double absrte = 0.0;
-        long double t_m = bisecMethod(a, b, &absrte, &i_r, a, n/2, t_v);
-        printf("%13Le %.19Le  %.19Le\n",i_r, t_m, absrte);
+        long double t_m = bisecMethod(a, b, &absrte, &i_r,a,n/2, t_v);
+        printf("%.13Le %.19Le  %.19Le\n",i_r, t_m, absrte);
+       
     }
+     n =  n * 2;
   }
+  // isLess = false;
+  // n =  26214400;
+  // while(!isLess){
+  //   printf("second part %u\n",n);
+  //    long double t_r = trap(a, b, n);
+  //    long double absre = absrte(t_v, t_r);
+  //     printf("n: %d absrte:%Le\n",n, absre);
+  //      n -= 10000;
+  //     if(absre > .00000000000005L){
+  //       isLess = true;
+       
+  //   }
+  // }
+  // n++;
+
+   // long double i_r = 0.0;
+   //      long double absrte = 0.0;
+   //      long double t_m = bisecMethod(a, b, &absrte, &i_r,13107200,26214400, t_v);
+   //      printf("%13Le %.19Le  %.19Le\n",i_r, t_m, absrte);
 }
 
 long double absrte(long double t_v, long double aprx){
 	long double true_error = fabsl(((t_v - aprx) / (t_v))); 
+  // printf("abserr %.13Le\n", true_error);
 	return true_error;
 }
 
@@ -78,14 +104,18 @@ long double bisecMethod(long double a,
        return fl;
     }
     long double t_r = trap(a, b, mid);
-    //printf("t_r: %.13Le\n", t_r);
+    printf("t_r: %.13Le\n", t_r);
+    printf("fl:%u  cel:%u\n", fl, cel);
     long double abserr =  absrte(t_v, t_r);
+    printf("abserr %.13Le\n", abserr);
     long double stc = .00000000000005L;
      *abstr = abserr;
      *i_r = t_r;
     if(abserr  > stc){
+      printf("T less\n");
      return bisecMethod(a, b, abstr, i_r, mid, cel,  t_v);
-    }else if(stc >= abserr){
+    }else if(stc > abserr){
+      printf("T greater\n");
       return bisecMethod(a, b, abstr ,i_r, fl, mid, t_v);
     }
       return fl;
