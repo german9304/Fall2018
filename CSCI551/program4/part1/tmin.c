@@ -13,6 +13,8 @@
   13107200   5.701955e-14
   1.3992905500000000000
   /26999999 - 50000000
+  0 100 89000000
+  44499999
  *
  */
 
@@ -44,7 +46,10 @@ int main(void){
     scanf("%Lf",&b);
     scanf("%d",&t);
     long double t_v = 4754.0192288588181366L;
-    trapMin(a, b, t, t_v);
+    //trapMin(a, b, t, t_v);
+    long double t_r = trap(a, b, t);
+    long double  a_e = absrte(t_r, t_v);
+    printf("%.13Le %.19Le\n", t_r, a_e);
     return 0;
 }
 
@@ -54,7 +59,7 @@ void trapMin(long double a,long double  b, unsigned int n, long double t_v){
      long double t_r = trap(a, b, n);
      long double absre = absrte(t_v, t_r);
       printf("n:%d absrte:%Le t_r:%.13Le\n",n, absre, t_r);
-      if(absre <= .00000000000005L){
+      if(absre <= 0.5e-14L){
         isLess = true;
         printf("second part\n");
         long double i_r = 0.0;
@@ -101,7 +106,9 @@ long double bisecMethod(long double a,
   long double t_v)
 {
     long double mid = (cel + fl) / 2.0;
-
+    if((unsigned int) mid == fl){
+     return mid;
+    }
     long double t_r = trap(a, b, mid);
     printf("t_r: %.13Le\n", t_r);
     printf("fl:%u  cel:%u mid:%.13Lf\n", fl, cel, mid);
