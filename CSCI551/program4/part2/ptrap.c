@@ -46,10 +46,11 @@ int main(void){
     h = height(a, b, t);   //number of processes
     //integral range for every processor
     total_trapezoids = t / comm_sz;
-    left_a = a + rank * h;
+   
+    left_a = a + rank *total_trapezoids * h;
     right_b = left_a + total_trapezoids *h;
     local_t = trap(left_a, right_b, t);
-    //printf("local_t: %Le\n",local_t);
+    //printf("local_t: %Le  total_trapezoids:%d\n",local_t, total_trapezoids);
     MPI_Reduce(&local_t, &res, 1, MPI_LONG_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
     // if(rank == 0){
@@ -70,6 +71,7 @@ int main(void){
 
     if(rank == 0){
        // endtime = MPI_Wtime();
+       // printf("res:%.19Le\n",res);
      absre =  arte(t_v, res);
     p_e = endtime - starttime;
      printf("Running on %d cores\n", comm_sz);
@@ -78,7 +80,7 @@ int main(void){
      printf("with n = %d trapezoids, our estimate of the integral from %Lf to %Lf = %.13Le\n", t, a, b, res);
      printf("true value = %.19Le\n", t_v);
      printf("absoule relative true error %.19Le\n", absre);
-     printf("criteria = %.19Le\n", 0.5e-14L);
+     printf("criteria = %.19Le\n", .00000000000005L);
     }
     /* Shut down MPI */
     MPI_Finalize();
