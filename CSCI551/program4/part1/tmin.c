@@ -17,6 +17,14 @@
   44499999
   44083498
   43999999
+  44083083  cel:44084441 mid:44083762.0000000000000
+  fl:44083496  cel:44083498 mid:44083497.0000000000000
+  0 100 42000000
+  l:43804687  cel:44500000 mid:44152343.5000000000000
+  l:43804687  cel:44500000 mid:44152343.5000000000000
+  fl:43978515  cel:44152343 mid:44065429.0000000000000
+  fl:44081725  cel:44087157 mid:44084441.0000000000000
+  fl:44083083  cel:44084441 mid:44083762.0000000000000
  *
  */
 
@@ -66,7 +74,8 @@ void trapMin(long double a,long double  b, unsigned int n, long double t_v){
  bool isLess = false;
 // printf("%s\n", );
   while(!isLess){
-   // printf("true min");
+   printf("true min\n");
+
      long double t_r = trap(a, b, n);
      //printf("%s\n", );
      long double absre = absrte(t_v, t_r);
@@ -126,7 +135,7 @@ long double bisecMethod(long double a,
     printf("fl:%u  cel:%u mid:%.13Lf\n", fl, cel, mid);
     long double abserr =  absrte(t_v, t_r);
     printf("abserr %.13Le\n", abserr);
-    long double stc = 0.000000000000005L;
+    long double stc = 0.5e-14L;
      *abstr = abserr;
      *i_r = t_r;
     if(abserr  > stc){
@@ -180,6 +189,7 @@ void print(){
  */
 long double trap(long double a, long double b, unsigned int n){
 	long double approx = (f(b) + f(a)) / 2.0;
+  printf("trap\n");
 	for(unsigned int i = 1; i <= n - 1; i++){
     //printf("%u\n",i );
 		long double ith = a + i * height(a, b, n);
