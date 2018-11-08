@@ -7,6 +7,8 @@
  * Purpose:  
  *  
  *  43999999
+ * 43804687  cel:44500000 mid:44152343.5000000000000
+  l:43804687 
  *
  *
  */
@@ -50,23 +52,23 @@ int main(void){
     }
     remind = (int)t % comm_sz;
 
-    if(rank == 0){
+    // if(rank == 0){
 
-       printf("reminder: %d\n", remind);
-    }
+    //   // printf("reminder: %d\n", remind);
+    // }
     //t = (int) t - remind;
     //if(){
+        
         if(rank == 0 ){
             t = t + (remind) * (comm_sz - 1);
         }else{
             t = (int) t - remind;
         }
+        h = height(a, b, t); 
     //}
-     h = height(a, b, t); 
-    printf("before local_t: %Lf  rank:%d, total_trapezoids:%Lf\n",t, rank, total_trapezoids);
-    total_trapezoids = t / comm_sz;
-    printf(" local_t: %Lf  rank:%d, total_trapezoids:%Lf\n",t, rank, total_trapezoids);
-     
+   // printf("before local_t: %Lf  rank:%d, total_trapezoids:%Lf\n",t, rank, total_trapezoids);
+    //printf(" local_t: %Lf  rank:%d, total_trapezoids:%Lf\n",t, rank, total_trapezoids);
+     total_trapezoids = t / comm_sz;
     left_a = a + rank * total_trapezoids * h;
     right_b = left_a + total_trapezoids  * h;
     local_t = trap(left_a, right_b, total_trapezoids, h);
