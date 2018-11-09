@@ -26,7 +26,7 @@ void get_input();
 
 int main(void){
     int rank, comm_sz;
-    long double  t;
+    long double  t, n;
     long double a, b, h, left_a, right_b, starttime, endtime;
     long double local_t, res;
     long double  elapsed;
@@ -45,6 +45,7 @@ int main(void){
 	
 	// Get User Input
     get_input(rank, &a, &b, &t);
+    n = t;
     MPI_Barrier(MPI_COMM_WORLD);
      if(rank == 0)
     {
@@ -68,11 +69,10 @@ int main(void){
     //}
    // printf("before local_t: %Lf  rank:%d, total_trapezoids:%Lf\n",t, rank, total_trapezoids);
     //printf(" local_t: %Lf  rank:%d, total_trapezoids:%Lf\n",t, rank, total_trapezoids);
-     total_trapezoids = t / comm_sz;
+    total_trapezoids = t / comm_sz;
     left_a = a + rank * total_trapezoids * h;
     right_b = left_a + total_trapezoids  * h;
     local_t = trap(left_a, right_b, total_trapezoids, h);
-    //printf("left_a:%Le right_b:%Le \n",left_a, right_b );
     MPI_Reduce(&local_t, &res, 1, MPI_LONG_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
     if(rank == 0){
@@ -85,9 +85,9 @@ int main(void){
      printf("Running on %d cores\n", comm_sz);
      printf("Elapsed time = %Lf\n", elapsed);
     // printf("starttime = %Lf\n", starttime);
-     printf("with n = %Lf trapezoids, our estimate of the integral from %Lf to %Lf = %.13Le\n", 
-        t, a, b, res);
-     printf("true value = %.19Le\n", t_v);
+     printf("with n = %d trapezoids, our estimate of the integral from %d to %d = %.13Le\n", 
+        (int) n, (int) a, (int) b, res);
+    // printf("true value = %.19Le\n", t_v);
      if(absre > 0.5e-14L){
        printf("absoule relative true error = %.19Le\n is Not less than criteria = %.19Le\n", 
         absre, 0.5e-14L);
