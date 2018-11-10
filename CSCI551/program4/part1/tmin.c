@@ -1,13 +1,11 @@
 
 /**
- * @file
+ * @file  tmin.c
  * @author  German Razo 
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details at
- * https://www.gnu.org/copyleft/gpl.html
+ * @brief This is a serial program, 
+ *        that performs the numerical integration
+ *        using the trapezoidal method.
  *
  * n: 44083498
  *
@@ -20,7 +18,6 @@
 
 long double trap(long double a, long double b, unsigned int count);
 long double f(long double x);
-bool absRelTrueErr(long double t_v, long double v_a);
 long double height(long double a, long double b, int n);
 void trapMin(long double a, long double b, unsigned int n, long double true_value);
 long double bisecMethod(
@@ -50,8 +47,7 @@ int main(void)
  * @brief This function searches for the minimum
  *        total of trapezoids needed that gives
  *        the correct answer in 14 digits for
- *        the define integral below:  
- *        -3 cos(x/6) + sqrt(pow((5 * sinl(x / 9)) + (8 * sinl(x / 2),4))     
+ *        the define integral with endpoints [a, b]      
  * 
  * @param a left endpoint of integral range
  * @param b right endpoint of integral range
@@ -136,9 +132,8 @@ long double bisecMethod(long double a,
 }
 
 /**
- * @brief This function calculates the integral 
- *        from a range with the enfdpoints [a, b]
- *        with the trapezoidal method 
+ * @brief This function estimates a define integral  
+ *        using the trapezoidal method
  * 
  * @param a is the leftendpoint of the integral range 
  * @param b is the right endpoint of the integral range
@@ -157,37 +152,27 @@ long double trap(long double a, long double b, unsigned int n)
 }
 
 /**
- * @brief 
+ * @brief Calculates the height of the trapezoid 
  * 
- * @param a 
- * @param b 
- * @param n 
- * @return long double 
+ * @param a left endpoint from range [a,b]
+ * @param b right endpoint from range [a,b]
+ * @param n is the number of trapezoids 
+ * @return long double the height of the trapezoid 
  */
 long double height(long double a, long double b, int n)
 {
   return (b - a) / (n);
 }
+
 /**
- * @brief 
+ * @brief This function calculcates value
+ *        of the function below to be integrated:
+ *        -3 cos(x/6) + sqrt(pow((5 * sinl(x / 9)) + (8 * sinl(x / 2),4)) 
+ *        
  * 
- * @param t_v 
- * @param v_a 
- * @return true 
- * @return false 
- */
-bool absRelTrueErr(long double t_v, long double v_a)
-{
-  long double true_error = fabsl(((t_v - v_a) / (t_v)));
-  return true_error <= .00000000000005L;
-}
-/**
- * @brief 
- * 
- * @param x 
+ * @param x value to calculate 
  * @return long double 
  */
-
 long double f(long double x)
 {
   long double sqrtIn = powl((5 * sinl(x / 9)) + (8 * sinl(x / 2)), 4);
