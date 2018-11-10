@@ -7,8 +7,6 @@
  *        that performs the numerical integration
  *        using the trapezoidal method.
  *
- * n: 44083498
- *
  */
 
 #include <stdio.h>
