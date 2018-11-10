@@ -34,10 +34,6 @@ int main(void){
     long double absre;
     int remind = 0;
     long double t_v = 4754.0192288588181366L;
-    // total_trapezoids = 0;
-    // total_trapezoids++;
-    // h = 0;
-    // h++;
 	MPI_Init(NULL, NULL);
 
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank); 
