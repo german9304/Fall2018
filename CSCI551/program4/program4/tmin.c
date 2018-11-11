@@ -9,6 +9,10 @@
  *        that performs the numerical integration
  *        using the trapezoidal method.
  *
+ *  @Description The tmin I found is 44083498,
+ *               I found the tmin with the methods: trapMin and bisecMethod,
+ *                         
+ * 
  */
 
 #include <stdio.h>
@@ -47,7 +51,8 @@ int main(void)
  * @brief This function searches for the minimum
  *        total of trapezoids needed that gives
  *        the correct answer in 14 digits for
- *        the define integral with endpoints [a, b]      
+ *        the define integral with endpoints [a, b]  
+ *            
  * 
  * @param a left endpoint of integral range
  * @param b right endpoint of integral range

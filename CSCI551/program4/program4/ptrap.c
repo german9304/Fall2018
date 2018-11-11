@@ -151,7 +151,6 @@ void get_input(int rank, long double *a, long double *b, long double *t)
     {
         printf("Enter a, b, and n\n");
         scanf("%Lf %Lf %Le", a, b, t);
-        printf("\n");
     }
     MPI_Bcast(a, 1, MPI_LONG_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(b, 1, MPI_LONG_DOUBLE, 0, MPI_COMM_WORLD);
