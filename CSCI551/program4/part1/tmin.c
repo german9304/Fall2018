@@ -169,7 +169,7 @@ long double height(long double a, long double b, int n)
  *        
  * 
  * @param x value to calculate 
- * @return long double 
+ * @return long double value of result function
  */
 long double f(long double x)
 {

@@ -5,11 +5,6 @@
  * part 2
  * From o244-01 to o244-10
  * Purpose:  
- *  
- *  43999999
- * 43804687  cel:44500000 mid:44152343.5000000000000
-  l:43804687 
-  44083498
  *
  *
  */
@@ -43,9 +38,8 @@ int main(void)
 
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    MPI_Comm_size(MPI_COMM_WORLD, &comm_sz); //number of processes
+    MPI_Comm_size(MPI_COMM_WORLD, &comm_sz); 
 
-    // Get User Input
     get_input(rank, &a, &b, &t);
     n = t;
     MPI_Barrier(MPI_COMM_WORLD);
@@ -86,9 +80,12 @@ int main(void)
     return 0;
 }
 /**
- * @brief 
+ * @brief This function prints 
+ *         if the absoule relative error is less than
+ *         or equal to the criteria 0.5e-14L
  * 
- * @param absre 
+ * @param absre the value of abosule relative true error 
+ * @return none
  */
 void printAbsrteCriteria(long double absre)
 {
@@ -104,13 +101,30 @@ void printAbsrteCriteria(long double absre)
     }
 }
 /**
- * @brief 
+ * @brief Calculates the total number of trapezoids
+ *         each process must have, 
+ *         if rank is 0 , this process gets 
+ *         total of trapezoids plus 
+ *         the reminder of total trapezoids % total processes
+ *         times total number of cores minus 1
+ *         Otherwise, processes other than 0 
+ *         get total trapezoids minus reminder of
+ *         total trapezoids % total processes,
+ *         this ensures trapezoid 0 gets even number of trapezoids
+ *         and the left over trapezoids subtracted from
+ *         the other processes, and the other processes 
+ *         (not including 0) get even number of trapezoids. 
+ *        this solves the issue when number of trapezoids
+ *        are not divisible by the total number of cores. 
+ *
  * 
- * @param remind 
- * @param rank 
- * @param t 
- * @param comm_sz 
- * @return long double 
+ * @param remind value of the reminder from,
+ *        total trapezoids % total processes
+ * @param rank process of rank 0... n-1
+ * @param t total numbe of trapezoids
+ * @param comm_sz total number of processes
+ * @return long double value of total number of trapezoids
+ *                      each core is assigned
  */
 long double trapSize(int remind, int rank, long double t, int comm_sz)
 {
@@ -121,12 +135,13 @@ long double trapSize(int remind, int rank, long double t, int comm_sz)
     return (int)t - remind;
 }
 /**
- * @brief Get the input object
+ * @brief Gets the user input: the left (a) and right endpoints (b)
+ *              and the number of trapezoids (t)
  * 
- * @param rank 
- * @param a 
- * @param b 
- * @param t 
+ * @param rank process of rank 0..n -1
+ * @param a left endpoint 
+ * @param b right endpoint 
+ * @param t total number of trapezoids 
  */
 void get_input(int rank, long double *a, long double *b, long double *t)
 {
@@ -141,49 +156,47 @@ void get_input(int rank, long double *a, long double *b, long double *t)
     MPI_Bcast(t, 1, MPI_LONG_DOUBLE, 0, MPI_COMM_WORLD);
 }
 
-/**
- * @brief 
- * 
- * @param a 
- * @param b 
- * @param n 
- * @param h 
- * @return long double 
- */
 
+/**
+ * @brief This function estimates a define integral  
+ *        using the trapezoidal method
+ * 
+ * @param a is the leftendpoint of the integral range 
+ * @param b is the right endpoint of the integral range
+ * @param n is the number of trapezoids 
+ * @param h is the height value of the trapezoid
+ * @return long double the result of the calculcated integral 
+ */
 long double trap(long double a, long double b, long double n, long double h)
 {
     long double approx = (f(b) + f(a)) / 2.0;
-    //printf("n: %.14Lf\n", n);
     for (unsigned int i = 1; i <= n - 1; i++)
     {
-        //printf("i: %d\n",i);
         long double ith = a + i * h;
         approx += f(ith);
-        //printf("f: %Lf\n", approx);
     }
-    //printf("h: %Le\n", h);
     return approx * h;
 }
 
 /**
- * @brief 
+ * @brief Calculates the height of the trapezoid 
  * 
- * @param a 
- * @param b 
- * @param n 
- * @return long double 
+ * @param a left endpoint from range [a,b]
+ * @param b right endpoint from range [a,b]
+ * @param n is the number of trapezoids 
+ * @return long double the height of the trapezoid 
  */
 long double height(long double a, long double b, int n)
 {
     return (b - a) / (n);
 }
 /**
- * @brief 
+ * @brief This function calculates 
+ *        the absolute relative true error 
  * 
- * @param t_v 
- * @param v_a 
- * @return long double 
+ * @param t_v is the true value 4754.0192288588181366
+ * @param v_a approximation value from the trapezoidal formula
+ * @return long double is the result abosule relative true error
  */
 long double arte(long double t_v, long double v_a)
 {
@@ -192,10 +205,13 @@ long double arte(long double t_v, long double v_a)
 }
 
 /**
- * @brief 
+ * @brief This function calculcates value
+ *        of the function below to be integrated:
+ *        -3 cos(x/6) + sqrt(pow((5 * sinl(x / 9)) + (8 * sinl(x / 2),4)) 
+ *        
  * 
- * @param x 
- * @return long double 
+ * @param x value to calculate 
+ * @return long double value of result function
  */
 long double f(long double x)
 {
