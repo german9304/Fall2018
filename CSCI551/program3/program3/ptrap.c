@@ -29,7 +29,8 @@ void printAbsrteCriteria(long double absre);
 void get_input(int rank, 
               long double *a, 
               long double *b, 
-              long double *t);
+              long double *t,
+              long double *startTime);
 
 int main(void)
 {
@@ -49,14 +50,9 @@ int main(void)
 
     MPI_Comm_size(MPI_COMM_WORLD, &comm_sz); 
 
-    get_input(rank, &a, &b, &t);
-    n = t;
     MPI_Barrier(MPI_COMM_WORLD);
-
-    if (rank == 0)
-    {
-        startTime = MPI_Wtime();
-    }
+    get_input(rank, &a, &b, &t, &startTime);
+    n = t;
     remind = (int)t % comm_sz;
 
     t = trapSize(remind, rank, t, comm_sz);
@@ -153,13 +149,18 @@ long double trapSize(int remind, int rank, long double t, int comm_sz)
  * @param b right endpoint 
  * @param t total number of trapezoids 
  */
-void get_input(int rank, long double *a, long double *b, long double *t)
+void get_input(int rank, 
+    long double *a, 
+    long double *b, 
+    long double *t,
+    long double *startTime)
 {
     if (rank == 0)
     {
         printf("Enter a, b, and n\n");
         scanf("%Lf %Lf %Le", a, b, t);
         printf("\n");
+        *startTime = MPI_Wtime();
     }
     MPI_Bcast(a, 1, MPI_LONG_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(b, 1, MPI_LONG_DOUBLE, 0, MPI_COMM_WORLD);
