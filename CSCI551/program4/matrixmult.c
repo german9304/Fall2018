@@ -4,7 +4,12 @@
 #include <time.h>
 #include <mpi.h>
 
-void ijkForm(int n, int matrix_1[][n], int matrix_2[][n]);
+void ijkForm(
+    int n, 
+    int rank, 
+    double local_m_1[], 
+    double local_m_2[],
+    double local_result[]);
 
 void ikjForm(int n, int matrix_1[][n], int matrix_2[][n]);
 
@@ -27,6 +32,12 @@ void readMatrix2(
     int rank);
 
 void print_matrix();
+
+void print_matrices(
+ int local_n,
+ int rank,
+ double local_m_1[], 
+ double local_m_2[]);
 
 void transpose_matrix(
     int n,
@@ -60,6 +71,7 @@ int main(void)
     // double matrix_2[n][n];
     double local_m_1[local_n];
     double local_m_2[local_n];
+    double local_result[n];
 
 
     if (!strcmp(flag, "R"))
@@ -80,37 +92,13 @@ int main(void)
     {
     }
 
-   
-
-    if(rank == 0){
-        //printf("rank inside 0\n");
-       // printf("rank:%d\n", rank);
-        for (int i = 0; i < local_n; ++i)
-        {
-            printf("rank: %d, %lf\n", rank, local_m_1[i]);
-        }
-        for (int i = 0; i < local_n; ++i)
-        {
-            printf("rank: %d, %lf\n", rank, local_m_2[i]);
-        }
-    }else{
-        for (int i = 0; i < local_n; ++i)
-        {
-            printf("rank: %d, %lf\n", rank, local_m_1[i]);
-        }
-        // printf("local_m_2  rank:%d\n", rank);
-        for (int i = 0; i < local_n; ++i)
-        {
-            printf("rank: %d, %lf\n", rank, local_m_2[i]);
-        }
-    }
-        
-  
+     
 
 
     if (!strcmp(form, "ijk"))
     {
             printf("rank:%d, ijk FORM\n", rank);
+            ijkForm(n, rank, local_m_1, local_m_2, local_result);
     }
     // else if (!strcmp(form, "ikj"))
     // {
@@ -297,6 +285,35 @@ void readMatrix2(
 }
 
 
+void print_matrices(
+ int local_n,
+ int rank,
+ double local_m_1[], 
+ double local_m_2[]){
+
+ if(rank == 0){
+        //printf("rank inside 0\n");
+       // printf("rank:%d\n", rank);
+        for (int i = 0; i < local_n; ++i)
+        {
+            printf("rank: %d, %lf\n", rank, local_m_1[i]);
+        }
+        for (int i = 0; i < local_n; ++i)
+        {
+            printf("rank: %d, %lf\n", rank, local_m_2[i]);
+        }
+    }else{
+        for (int i = 0; i < local_n; ++i)
+        {
+            printf("rank: %d, %lf\n", rank, local_m_1[i]);
+        }
+        // printf("local_m_2  rank:%d\n", rank);
+        for (int i = 0; i < local_n; ++i)
+        {
+            printf("rank: %d, %lf\n", rank, local_m_2[i]);
+        }
+    }
+}
 /**
  * @brief 
  * 
@@ -304,8 +321,25 @@ void readMatrix2(
  * @param matrix_1 
  * @param matrix_2 
  */
-void ijkForm(int n, int matrix_1[][n], int matrix_2[][n])
+void ijkForm(int n,
+ int rank, 
+ double 
+ local_m_1[], 
+ double local_m_2[],
+ double local_result[])
 {
+   // print_matrices(n, rank, local_m_1, local_m_2);
+    double recvData[n * n];
+    MPI_Allgather(local_m_2, n, MPI_DOUBLE,
+     recvData, n, MPI_DOUBLE, MPI_COMM_WORLD);
+    printf("all gather matrix\n");
+    for(int i = 0; i < n * n; i++){
+        printf("%f \n", recvData[i]);
+    }
+    printf("local_m_1\n");
+    for(int i = 0; i < n; i++){
+        printf("%f \n", local_m_1[i]);
+    }
 }
 /**
  * @brief 
