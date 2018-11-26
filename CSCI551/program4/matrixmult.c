@@ -49,7 +49,6 @@ void readMatrix2(
 
 void print_matrix(
     int n,
-    int rank,
     int local_n,
     double local_result[]);
 
@@ -91,7 +90,6 @@ int main(void)
     // double matrix_2[n][n];
     double local_m_1[local_n];
     double local_m_2[local_n];
-    printf("local_n: %d\n", local_n);
     double local_result[local_n];
 
     if (!strcmp(flag, "R"))
@@ -132,17 +130,15 @@ int main(void)
         printf("error command\n");
     }
 
-    print_matrix(n, rank, local_n, local_result);
+    // print_matrix(n, local_n, local_result);
 
     MPI_Finalize();
     return 0;
 }
 
-void print_matrix(int n, int rank, int local_n, double local_result[])
+void print_matrix(int n, int local_n, double local_result[])
 {
     double rcv_result[n * n];
-    if (rank == 0)
-    {
         MPI_Gather(local_result, local_n, MPI_DOUBLE,
                    rcv_result, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         int iter = 0;
@@ -155,12 +151,6 @@ void print_matrix(int n, int rank, int local_n, double local_result[])
             }
             printf("\n");
         }
-    }
-    else
-    {
-        MPI_Gather(local_result, local_n, MPI_DOUBLE,
-                   rcv_result, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    }
 }
 
 void transpose_matrix(
@@ -229,7 +219,6 @@ void readMatrix1(
 
     if (rank == 0)
     {
-        printf("enter matrix1 values:\n");
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
@@ -290,7 +279,6 @@ void readMatrix2(
     // int iter = 0;
     if (rank == 0)
     {
-        printf("enter matrix2 values:\n");
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
@@ -415,8 +403,8 @@ void ijkForm(
     double local_m_2[],
     double local_result[])
 {
-    rank++;
     local_iter++;
+    local_result[0] = 0.0;
     //print_matrices(local_n, rank, local_m_1, local_m_2);
     double recvData[n * n];
     // if(rank == 0){
@@ -428,38 +416,47 @@ void ijkForm(
     // }
     // printf("local_m_1\n");
     // for(int i = 0; i < local_n; i++){
-    //     printf("%f \n", local_m_1[i]);
+    //     printf("rank:%d, %f \n", rank, local_m_1[i]);
     // }
-    for (int i = 0; i < n; i++)
+
+    // for (int i = 0; i < n; i++)
+    // {
+    //     for (int j = 0; j < n; j++)
+    //     {
+    //         int ind_res = (i * n) + j;
+    //         // double res = 0.0;
+    //         for (int k = 0; k < n; k++)
+    //         {
+    //             int ind = (i * n + k);
+    //             int mult = (n * j + k);
+    //             //local_result[ind] += (local_m_1[ind] * recvData[mult]);
+    //             // printf("rank:%d, %d , %d , %d \n", rank, ind, mult, ind_res);
+    //             local_result[ind_res] += (local_m_1[ind] * recvData[mult]);
+    //             // printf("%f * %f \n", local_m_1[ind], recvData[mult]);
+    //         }
+    //     }
+    // }
+local_result[0] = 0.0;
+local_m_1[0] = 0.0;
+     for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < n; j++)
-        {
-            int ind_res = (i * n) + j;
+        // for (int j = 0; j < n; j++)
+        // {
+            // int ind_res = (i * n) + j;
             // double res = 0.0;
             for (int k = 0; k < n; k++)
             {
                 int ind = (i * n + k);
-                int mult = (n * j + k);
-                //local_result[ind] += (local_m_1[ind] * recvData[mult]);
-                // printf("rank:%d, %d , %d , %d \n", rank, ind, mult, ind_res);
-                local_result[ind_res] += (local_m_1[ind] * recvData[mult]);
+                // int mult = (n * j + k);
+               // local_result[ind] += (local_m_1[ind] * recvData[mult]);
+                  printf("rank:%d, %d \n", k, rank, ind);
+                // local_result[ind_res] += (local_m_1[ind] * recvData[mult]);
                 // printf("%f * %f \n", local_m_1[ind], recvData[mult]);
+                // printf("rank:%d \n", rank);
             }
-            // printf("res: %f\n", res);
-            //printf("\n");
-        }
+        //}
     }
 
-    // }else{
-    // MPI_Allgather(local_m_2, local_n, MPI_DOUBLE,
-    //  recvData, local_n, MPI_DOUBLE, MPI_COMM_WORLD);
-    //}
-
-    // for(int i = 0; i < n; i++){
-
-    // }
-
-    // }
 }
 /**
  * @brief 
