@@ -2,12 +2,13 @@
  * @file:   ptrap.c
  * @author: German Razo
  *
- * part 1 of program3
+ * part 2 of program3
  *
  * @brief  This program uses MPI,
  *         to implement a parallel version,
  *         of the trapezoidal rule.
  *
+ *  @Description The tmin I found is 44083498
  */
 #include <stdio.h>
 #include <mpi.h>

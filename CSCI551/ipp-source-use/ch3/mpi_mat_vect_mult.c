@@ -64,13 +64,28 @@ int main(void) {
    Get_dims(&m, &local_m, &n, &local_n, my_rank, comm_sz, comm);
    Allocate_arrays(&local_A, &local_x, &local_y, local_m, n, local_n, comm);
    Read_matrix("A", local_A, m, local_m, n, my_rank, comm);
-#  ifdef DEBUG
+   if(my_rank == 0){
+      printf("rank:%d", my_rank);
+      for (int i = 0; i < local_m * n; ++i)
+      {
+         /* code */
+         printf("%d",local_A[i]);
+      }
+      printf("\n");
+   }else{
+      printf("rank:%d", my_rank);
+      for (int i = 0; i < local_m * n; ++i)
+      {
+         printf("%d",local_A[i]);
+      }
+       printf("\n");
+   }
    Print_matrix("A", local_A, m, local_m, n, my_rank, comm);
-#  endif
+   
    Read_vector("x", local_x, n, local_n, my_rank, comm);
-#  ifdef DEBUG
+
    Print_vector("x", local_x, n, local_n, my_rank, comm);
-#  endif
+
 
    Mat_vect_mult(local_A, local_x, local_y, local_m, n, local_n, comm);
 
@@ -378,7 +393,7 @@ void Print_vector(
       MPI_Comm  comm        /* in */) {
    double* vec = NULL;
    int i, local_ok = 1;
-
+   printf("print vector")
    if (my_rank == 0) {
       vec = malloc(n*sizeof(double));
       if (vec == NULL) local_ok = 0;
@@ -433,7 +448,6 @@ void Mat_vect_mult(
          "Can't allocate temporary vector", comm);
    MPI_Allgather(local_x, local_n, MPI_DOUBLE,
          x, local_n, MPI_DOUBLE, comm);
-
    for (local_i = 0; local_i < local_m; local_i++) {
       local_y[local_i] = 0.0;
       for (j = 0; j < n; j++)

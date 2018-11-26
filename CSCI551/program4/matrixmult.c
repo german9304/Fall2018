@@ -130,7 +130,7 @@ int main(void)
         printf("error command\n");
     }
 
-    // print_matrix(n, local_n, local_result);
+    print_matrix(n, local_n, local_result);
 
     MPI_Finalize();
     return 0;
@@ -405,6 +405,7 @@ void ijkForm(
 {
     local_iter++;
     local_result[0] = 0.0;
+    rank++;
     //print_matrices(local_n, rank, local_m_1, local_m_2);
     double recvData[n * n];
     // if(rank == 0){
@@ -419,43 +420,43 @@ void ijkForm(
     //     printf("rank:%d, %f \n", rank, local_m_1[i]);
     // }
 
-    // for (int i = 0; i < n; i++)
-    // {
-    //     for (int j = 0; j < n; j++)
-    //     {
-    //         int ind_res = (i * n) + j;
-    //         // double res = 0.0;
-    //         for (int k = 0; k < n; k++)
-    //         {
-    //             int ind = (i * n + k);
-    //             int mult = (n * j + k);
-    //             //local_result[ind] += (local_m_1[ind] * recvData[mult]);
-    //             // printf("rank:%d, %d , %d , %d \n", rank, ind, mult, ind_res);
-    //             local_result[ind_res] += (local_m_1[ind] * recvData[mult]);
-    //             // printf("%f * %f \n", local_m_1[ind], recvData[mult]);
-    //         }
-    //     }
-    // }
-local_result[0] = 0.0;
-local_m_1[0] = 0.0;
-     for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
-        // for (int j = 0; j < n; j++)
-        // {
-            // int ind_res = (i * n) + j;
+        for (int j = 0; j < n; j++)
+        {
+            int ind_res = (i * n) + j;
             // double res = 0.0;
             for (int k = 0; k < n; k++)
             {
                 int ind = (i * n + k);
-                // int mult = (n * j + k);
-               // local_result[ind] += (local_m_1[ind] * recvData[mult]);
-                  printf("rank:%d, %d \n", k, rank, ind);
-                // local_result[ind_res] += (local_m_1[ind] * recvData[mult]);
+                int mult = (n * j + k);
+                //local_result[ind] += (local_m_1[ind] * recvData[mult]);
+                // printf("rank:%d, %d , %d , %d \n", rank, ind, mult, ind_res);
+                local_result[ind_res] += (local_m_1[ind] * recvData[mult]);
                 // printf("%f * %f \n", local_m_1[ind], recvData[mult]);
-                // printf("rank:%d \n", rank);
             }
-        //}
+        }
     }
+// local_result[0] = 0.0;
+// local_m_1[0] = 0.0;
+//      for (int i = 0; i < n; i++)
+//     {
+//         // for (int j = 0; j < n; j++)
+//         // {
+//             // int ind_res = (i * n) + j;
+//             // double res = 0.0;
+//             for (int k = 0; k < n; k++)
+//             {
+//                 int ind = (i * n + k);
+//                 // int mult = (n * j + k);
+//                // local_result[ind] += (local_m_1[ind] * recvData[mult]);
+//                   printf("rank:%d, %d \n", k, rank, ind);
+//                 // local_result[ind_res] += (local_m_1[ind] * recvData[mult]);
+//                 // printf("%f * %f \n", local_m_1[ind], recvData[mult]);
+//                 // printf("rank:%d \n", rank);
+//             }
+//         //}
+//     }
 
 }
 /**
