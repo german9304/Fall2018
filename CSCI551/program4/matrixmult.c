@@ -521,20 +521,20 @@ void kijForm(
     double local_result[])
 {
     double recvData[n * n];
-    local_result[0] = 0.0;
+    // local_result[0] = 0.0;
     MPI_Allgather(local_m_2, local_n, MPI_DOUBLE,
                   recvData, local_n, MPI_DOUBLE, MPI_COMM_WORLD);
-    printf("all gather matrix\n");
-    for (int i = 0; i < n * n; i++)
-    {
-        printf("%f \n", recvData[i]);
-    }
-    printf("local_m_1\n");
-    for (int i = 0; i < local_n; i++)
-    {
-        printf("%f \n", local_m_1[i]);
-    }
-    // rank++;
+    // printf("all gather matrix\n");
+    // for (int i = 0; i < n * n; i++)
+    // {
+    //     printf("%f \n", recvData[i]);
+    // }
+    // printf("local_m_1\n");
+    // for (int i = 0; i < local_n; i++)
+    // {
+    //     printf("%f \n", local_m_1[i]);
+    // }
+    rank++;
     for (int i = 0; i < n; i++)
     {
 
@@ -546,11 +546,11 @@ void kijForm(
             {
                 int ind = (i * n + k);
                 int mult = (n * j + k);
-                // local_result[ind] += (local_m_1[ind_res] * recvData[ind]);
-                printf("rank:%d, %d , %d, %d \n", rank, ind, ind_res, mult);
+                local_result[mult] += (local_m_1[ind_res] * recvData[ind]);
+                // printf("rank:%d, %d , %d, %d \n", rank, ind, ind_res, mult);
                 // local_result[ind] += (local_m_1[ind_res] * recvData[mult]);
-                // printf("%f * %f = %f \n", local_m_1[ind_res],
-                // recvData[mult], local_result[ind]);
+               // printf("%f * %f \n", local_m_1[ind_res],
+                 // recvData[ind]/*, local_result[ind]*/);
                 // res+= (local_m_1[ind_res] * recvData[ind]);
                 // local_result[ind_res]
             }
