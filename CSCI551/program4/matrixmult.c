@@ -15,6 +15,7 @@ void ijkForm(
 
 void ikjForm(
  int n,
+ int rank,
  int local_n,
  double local_m_1[], 
  double local_m_2[],
@@ -32,6 +33,7 @@ void readMatrix1(
     int rank);
 
 void readMatrix2(
+    char form[],
     int n, 
     int local_n,
     double matrix_2[][n],
@@ -99,7 +101,13 @@ int main(void)
        // printf("read matrix I\n");
        readMatrix1(n, local_n, matrix_1, local_m_1, rank);
 
-       readMatrix2(n, local_n, matrix_2, local_m_2, rank);
+       readMatrix2(
+        form,
+        n, 
+        local_n, 
+        matrix_2, 
+        local_m_2, 
+        rank);
     }
     else
     {
@@ -116,8 +124,8 @@ int main(void)
     }
     else if (!strcmp(form, "ikj"))
     {
-        ikjForm(n, local_iter, rank, local_n, 
-            local_m_1, local_m_2, local_result);
+        ikjForm(n, rank, local_n, local_m_1, 
+            local_m_2,local_result);
     }
     // else if (!strcmp(form, "kij"))
     // {
@@ -126,7 +134,7 @@ int main(void)
     // else
     // {
     // }
-   print_matrix(n, rank, local_n, local_result);
+     print_matrix(n, rank, local_n, local_result);
 
     MPI_Finalize();
     return 0;
@@ -257,6 +265,7 @@ void readMatrix1(
 }
 
 void readMatrix2(
+ char form[],
  int n,
  int local_n, 
  double matrix_2[][n],
@@ -278,7 +287,14 @@ void readMatrix2(
         } //for
         // MPI_Scatter(matrix_2, local_n, MPI_DOUBLE, 
         //     local_m_2, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-        transpose_matrix(n, matrix_2, transp_matr);
+        // if(!strcmp(form, "ijk")){
+        //     transpose_matrix(n, matrix_2, transp_matr);
+        //      MPI_Scatter(transp_matr, local_n, MPI_DOUBLE, 
+        //     local_m_2, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        // }else{
+        //      MPI_Scatter(matrix_2, local_n, MPI_DOUBLE, 
+        //     local_m_2, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        // }
         // printf("transp_matr\n");
         // for (int i = 0; i < n; i++)
         // {
@@ -297,12 +313,16 @@ void readMatrix2(
         //     printf("%f \n", temp_matr[i]);
 
         // } //for
-        MPI_Scatter(transp_matr, local_n, MPI_DOUBLE, 
+      
+     }
+        if(!strcmp(form, "ijk")){
+            transpose_matrix(n, matrix_2, transp_matr);
+             MPI_Scatter(transp_matr, local_n, MPI_DOUBLE, 
             local_m_2, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-     }else{
-        MPI_Scatter(transp_matr, local_n, MPI_DOUBLE, 
+        }else{
+             MPI_Scatter(matrix_2, local_n, MPI_DOUBLE, 
             local_m_2, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    }
+        }
     // printf("matrix2\n");
     // for (int i = 0; i < n * n; i++)
     // {
@@ -428,6 +448,7 @@ void ijkForm(
  */
 void ikjForm(
  int n,
+ int rank, 
  int local_n,
  double local_m_1[], 
  double local_m_2[],
@@ -435,21 +456,34 @@ void ikjForm(
 {
  double recvData[n * n];
     // if(rank == 0){
+ // local_result[0] = 23;
         MPI_Allgather(local_m_2, local_n, MPI_DOUBLE,
-         recvData, local_n, MPI_DOUBLE, MPI_COMM_WORLD);   
+         recvData, local_n, MPI_DOUBLE, MPI_COMM_WORLD); 
+         printf("all gather matrix\n");
+        for(int i = 0; i < n * n; i++){
+            printf("%f \n", recvData[i]);
+        }
+        printf("local_m_1\n");
+        for(int i = 0; i < local_n; i++){
+            printf("%f \n", local_m_1[i]);
+        }
+       rank++;
          for(int i = 0; i < n; i++){
            for(int j = 0; j < n; j++){
             int ind_res = (i * n) + j;
-           // double res = 0.0;
+            // double res = 0.0;
                 for(int k = 0; k < n; k++){
                     int ind = (i * n + k);
                     int mult = (n * j + k);
-                    //local_result[ind] += (local_m_1[ind] * recvData[mult]);
-                    // printf("rank:%d, %d , %d , %d \n", rank, ind, mult, ind_res);
-                     local_result[ind_res] += (local_m_1[ind] * recvData[mult]);
-                     // printf("%f * %f \n", local_m_1[ind], recvData[mult]);
+                    // local_result[ind] += (local_m_1[ind_res] * recvData[ind]);
+                       // printf("rank:%d, %d , %d, %d \n", rank, ind, ind_res, mult);
+                     local_result[ind] += (local_m_1[ind_res] * recvData[mult]);
+                       // printf("%f * %f = %f \n", local_m_1[ind_res], 
+                            // recvData[mult], local_result[ind]);
+                       // res+= (local_m_1[ind_res] * recvData[ind]);
+                        // local_result[ind_res]
                 }
-               // printf("res: %f\n", res);
+                // printf("res: %f\n", res);
                 //printf("\n");
             }
         }
