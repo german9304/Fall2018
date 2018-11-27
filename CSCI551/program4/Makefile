@@ -1,7 +1,7 @@
 all: matrixmult matrix_mpi mpi_mat_vect_mult
 
 matrixmult: matrixmult.c
-	mpicc -g -Wall -W -Werror -std=c99 -o matrixmult matrixmult.c 
+	mpicc -g -std=c99 -o matrixmult matrixmult.c 
 matrix_mpi: matrix_mpi.c 
 	mpicc -g -Wall -W -Werror -std=c99 -o matrix_mpi matrix_mpi.c 
 mpi_mat_vect_mult: mpi_mat_vect_mult.c 
