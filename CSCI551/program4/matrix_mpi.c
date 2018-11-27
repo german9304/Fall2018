@@ -5,45 +5,108 @@
 
 
 int main(void){
-    int my_rank, comm_sz;
+    int my_rank, comm_sz, div, n;
+    int p1, c1, p2, r_m, p_r;
+    int sum  = 10;
+    int total;
     MPI_Init(NULL, NULL);
     MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
-
-
-    int numbers[4] = {5,2,3,4};
-    int remind = 4 % comm_sz;
     if(my_rank == 0){
-        int s = ((comm_sz - 1) * remind);
-    printf("s:%d\n", 4 - s);
+        scanf("%d", &n);
+        printf("%d\n",n);
+        total = n * n;
     }
-    int sendCounts[3] = {1,1,2};
-    int dpls[3] = {0, 1, 2};
-    int temp[2];
+    MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&total, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    int numbers[25] = {
+        5,2,3,4,6, 
+        1,2,3,2,6,  
+        5,100,3,45,100,  
+        4,4,3,4,3,
+        2,7,8,9,9 };
+    // int temp[10];
+    r_m = n % comm_sz; //reminder
+    p_r = n / comm_sz;
+  
+    // int r_p = remind * n;  //row per processor
+    // int r_m = (n * n) - (r_p * (comm_sz - 1));
     
     if(my_rank == 0){
-    	MPI_Scatterv(numbers, sendCounts, dpls, MPI_INT, 
-            temp, 2, MPI_INT, 0, MPI_COMM_WORLD);
+        if(r_m != 0){
+           p_r = p_r + 1;
+        }
+        // printf("remind:%d, div:%d \n", r_m, div);
+        printf("rank:%d, p_r:%d\n", my_rank, p_r);
     }else{
-    	MPI_Scatterv(numbers, sendCounts, dpls, MPI_INT, 
-            temp, 2, MPI_INT, 0, MPI_COMM_WORLD);
+        int sub = r_m - 1;
+        if(r_m > 0 && my_rank < r_m){
+           printf("rank:%d, p_r:%d \n", my_rank, p_r + 1);
+        }else{
+            printf("rank:%d, p_r:%d\n", my_rank, p_r);
+        }
+        // printf("rank:%d, p_r:%d\n", my_rank, p_r);
     }
+    // div = n / comm_sz;
+    // int sendCounts[comm_sz];
+    // int dpls[comm_sz];
+    // for(int i = 0; i < comm_sz; i++){
+    //     dpls[i] = 0;
+    // }
+    // c1 = 10;
+    // pr = 5;
+    
+    // sendCounts[0] = c1;
+    // dpls[0] = 0;
+    // // sum  = dpls[0];
+
+    // for(int i = 1; i < comm_sz; i++){
+    //    //  printf("sum: %d\n", sum);
+    //     sendCounts[i] = pr;
+    //     dpls[i] = sum;
+    //     // printf("rank:%d, dpls:%d\n", my_rank,dpls[i]);
+    //     sum+= sendCounts[i];
+    //  }
+    // int sendCounts[3] = {1,1,2};
+    // for(int j = 0; j < comm_sz; j++){
+    //  dpls[j] = j;
+    //  printf("rank:%d, dpls:%d\n", my_rank, dpls[j]);
+    // }
+    // int temp[10];
+    // for(int i = 0; i < pr; i++){
+    //     temp[i] = 0;
+    // }
+    // // printf("c1: %d, pr:%d\n", c1, pr);
+    // if(my_rank == 0){
+    // 	MPI_Scatterv(numbers, sendCounts, dpls, MPI_INT, 
+    //         temp, 10, MPI_INT, 0, MPI_COMM_WORLD);
+    // }else{
+    // 	MPI_Scatterv(numbers, sendCounts, dpls, MPI_INT, 
+    //         temp, 5, MPI_INT, 0, MPI_COMM_WORLD);
+    // }
+    // if(my_rank == 0){
+    //  c1 = 5;
+    //  MPI_Scatter(numbers, c1, MPI_INT, temp, 10, MPI_INT, 0, MPI_COMM_WORLD);
+    // }else{
+    //     c1 = 10;
+    //  MPI_Scatter(numbers, c1, MPI_INT, temp, 10, MPI_INT, 0, MPI_COMM_WORLD);
+    // }
 
 
-    if(my_rank == 0){
-    	printf("rank:%d\n", my_rank);
-    	for(int i = 0; i < 2; i++){
-            printf("%d ",temp[i]);
-    	}
-    	printf("\n");
-    }else{
-    	printf("rank:%d\n", my_rank);
-    	for(int i = 0; i < 2; i++){
-    		printf("%d ",temp[i]);
-    	}
-    	printf("\n");
-    }
+    // if(my_rank == 0){
+    // 	// printf("rank:%d\n", my_rank);
+    // 	for(int i = 0; i < 10; i++){
+    //         printf("rank:%d , %d\n",my_rank, temp[i]);
+    // 	}
+    // 	printf("\n");
+    // }else{
+    // 	// printf("rank:%d\n", my_rank);
+    // 	for(int i = 0; i < pr; i++){
+    // 		printf("rank:%d , %d\n",my_rank, temp[i]);
+    // 	}
+    // 	printf("\n");
+    // }
 
     MPI_Finalize();
 	return 0;
@@ -86,15 +149,21 @@ int main(void){
 //     int rem = (SIZE*SIZE)%size;
 
 //     // calculate send counts and displacements
-//     for (int i = 0; i < size; i++) {
-//         sendcounts[i] = (SIZE*SIZE)/size;
-//         if (rem > 0) {
-//             sendcounts[i]++;
-//             rem--;
-//         }
+//     // for (int i = 0; i < size; i++) {
+//     //     sendcounts[i] = (SIZE*SIZE)/size;
+//     //     if (rem > 0) {
+//     //         sendcounts[i]++;
+//     //         rem--;
+//     //     }
 
-//         displs[i] = sum;
-//         sum += sendcounts[i];
+//     //     displs[i] = sum;
+//     //     sum += sendcounts[i];
+//     // }
+//     int sc = (SIZE*SIZE)/size;
+//     int res = sec - rem;
+
+//     if(rank == 0){
+
 //     }
 
 //     // print calculated send counts and displacements for each process
