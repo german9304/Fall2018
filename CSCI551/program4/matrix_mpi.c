@@ -25,6 +25,7 @@ void getUserInput(int *n, char form[], char flag[], int rank)
  * @param matrix_2 
  */
 void readMatrix1(
+    char form[],
     int n,
     int comm_sz,
     int p_r,
@@ -66,7 +67,45 @@ void readMatrix1(
         MPI_Scatterv(matrix_1, send_counts, displs, MPI_DOUBLE, 
              global_m, p_r, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     }
+}
 
+void readMatrix2(
+    char form[],
+    int n,
+    int comm_sz,
+    double matrix_2[][n],
+    double t_m[n][n],
+    int rank)
+{
+    if (rank == 0)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                scanf("%lf", &matrix_2[i][j]);
+            }
+        } //for
+    }
+    // transpose_matrix(n, matrix_2, t_m);
+    MPI_Bcast(t_m, n * n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    // if (!strcmp(form, "ijk"))
+    // {
+    //     double transp_matr[n][n];
+    //     transpose_matrix(n, matrix_2, transp_matr);
+    //     MPI_Scatter(transp_matr, local_n, MPI_DOUBLE,
+    //                 local_m_2, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    // }
+    // else
+    // {
+    //     MPI_Scatter(matrix_2, local_n, MPI_DOUBLE,
+    //                 local_m_2, local_n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    // }
+    // printf("matrix2\n");
+    // for (int i = 0; i < n * n; i++)
+    // {
+    //         printf("%lf \n", local_m_2[i]);
+    // }     //for
 
 }
 
@@ -91,6 +130,9 @@ int main(void){
 
     total = n * n;
     double matrix_1[n][n];
+    double matrix_2[n][n];
+    double t_m[n][n];
+
     int send_counts[comm_sz];
     int displs[comm_sz];
     for(int i = 0; i < comm_sz; i++){
@@ -136,9 +178,9 @@ int main(void){
     else if (!strcmp(flag, "I"))
     {
         // printf("read matrix I\n");
-        readMatrix1(n, comm_sz, p_r, my_rank, global_m, 
+        readMatrix1(form, n, comm_sz, p_r, my_rank, global_m, 
             matrix_1, send_counts, displs);
-
+        readMatrix2(form, n, comm_sz, matrix_2, t_m, my_rank);
         // readMatrix2();
     }
     else
@@ -153,6 +195,16 @@ int main(void){
 
     if(my_rank == 0){
       printf("total_sum:%d\n", total_sum);
+      printf("matrix_2\n");
+
+       for (int i = 0; i < n; ++i)
+        {
+            for(int j = 0; j < n; j++){
+                   printf("%f ",matrix_2[i][j]);
+            }
+            printf("\n");
+            /* code */
+        }
     }
         for (int i = 0; i < p_r/n; ++i)
         {
