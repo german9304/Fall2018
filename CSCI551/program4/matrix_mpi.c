@@ -43,14 +43,15 @@ void getUserInput(int *n, char form[], char flag[], int rank)
  * @param matrix_1 
  * @param matrix_2 
  */
-void readMatrix1(
+void input_matrix(
     char form[],
     int n,
     int comm_sz,
     int p_r,
     int my_rank, 
-    double global_m[],
+    double local_m[],
     double matrix_1[][n],
+    double matrix_2[][n],
     double t_m[][n],
     int send_counts[],
     int displs[n])
@@ -66,37 +67,37 @@ void readMatrix1(
                 scanf("%lf", &matrix_1[i][j]);
             }
         } //for
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                scanf("%lf", &matrix_2[i][j]);
+            }
+        } //for
     }
 
     if(my_rank == 0){
         int sum = 0;
-        // printf("sendcounts\n");
-        // for(int i = 0; i < comm_sz; i++){
-        //    printf("%d ", send_counts[i]);
-        // }
         for(int i = 0; i < comm_sz; i++){
             displs[i] = sum;
             sum += send_counts[i];
         }
-       //  printf("\n");
-        // if (!strcmp(form, "kij"))
-        // {
-        //     // kijForm(n, rank, local_n, local_m_1,
-        //     //  local_m_2,local_result);
-        // }else{
-
-        // }
-        
     }
     if (!strcmp(form, "kij"))
     {
         transpose_matrix(n, matrix_1, t_m);
         MPI_Scatterv(t_m, send_counts, displs, MPI_DOUBLE, 
-        global_m, p_r, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        local_m, p_r, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     }else{
         MPI_Scatterv(matrix_1, send_counts, displs, MPI_DOUBLE, 
-        global_m, p_r, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        local_m, p_r, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     }
+
+    MPI_Bcast(matrix_2, n * n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+
+
 }
 
 void readMatrix2(
@@ -154,11 +155,13 @@ void ijkForm(
     int p_r,
     double m_1[],
     double m_2[][n],
-    double t_m[][n])
+    double t_m[][n],
+    double r_m[])
 {
     // /*
     //  serial program one processor 
     // */
+    // printf("my_rank:%d, p_r:%d", my_rank, p_r);
     transpose_matrix(n, m_2, t_m);
     double res = 0.0;
     for (int i = 0; i < p_r/n; i++)
@@ -167,18 +170,19 @@ void ijkForm(
         {
             for (int k = 0; k < n; k++)
             {
-                int ind = (i * n + k);
+                // int ind = (i * n + k);
                 // printf("%f * %f ", m_1[ind] , m_2[j][k]);
-                res += m_1[ind] * t_m[j][k];
-                // printf("%f ", res);
-                // printf("%f ", m_2[i][k]);
+                // res += m_1[i * n + k] * t_m[j][k];
+               //  printf("%d ", i * n + j);
+                r_m[i * n + j] += m_1[i * n + k] * t_m[j][k];
+                // printf("[%d][%d] ", i, j);
+                // printf("\n");
                 /* code */
             }
-           printf("%f ", res);
-           res = 0.0;
         }
          printf("\n");
     }
+   //  printf("rank:%d \n", my_rank);
 }
 /**
  * @brief 
@@ -192,7 +196,8 @@ void ikjForm(
     int my_rank,
     int p_r,
     double m_1[],
-    double m_2[][n])
+    double m_2[][n],
+    double r_m[])
 {
     // for(int i = 0; i < n; i++){
     //     for(int j = 0; j < n; j++){
@@ -233,28 +238,35 @@ void ikjForm(
  */
 void kijForm(
     int n,
-    int rank,
-    int local_n,
-    double local_m_1[],
-    double local_m_2[],
-    double local_result[])
+    int my_rank,
+    int p_r,
+    double m_1[],
+    double m_2[][n],
+    double r_m[])
 {
+    // for(int i = 0; i < n; i++){
+    //     for(int j = 0; j < n; j++){
+    //         printf("%f ", m_1[i * n + j]);
+    //     }
+    //     printf("\n");
+    // }
+    // }
  
-    for (int i = 0; i < n; i++)
+    for (int k = 0; k < p_r/n; k++)
     {
-        for (int j = 0; j < n; j++)
+        for (int i = 0; i < n; i++)
         {
-            int ind_res = (i * n) + j;
+            int ind_res = (k * n) + i;
             // double res = 0.0;
-            for (int k = 0; k < n; k++)
+            for (int j = 0; j < n; j++)
             {
-                int ind = (i * n + k);
-                int mult = (n * j + k);
+                int ind = (k * n + j);
+                int mult = (n * j + j);
                 // local_result[mult] += (local_m_1[ind_res] * recvData[ind]);
-                printf("rank:%d, %d , %d, %d \n", rank, ind, ind_res, mult);
+                // printf("rank:%d, %d , %d, %d \n", my_rank, ind, ind_res, mult);
                 // local_result[ind] += (local_m_1[ind_res] * recvData[mult]);
-               // printf("%f * %f \n", local_m_1[ind_res],
-                 // recvData[ind]/*, local_result[ind]*/);
+              printf("%f * %f \n", m_1[(k * n) + i],
+                m_2[k][j]/*, local_result[ind]*/);
                 // res+= (local_m_1[ind_res] * recvData[ind]);
                 // local_result[ind_res]
             }
@@ -287,6 +299,7 @@ int main(void){
     total = n * n;
     double matrix_1[n][n];
     double matrix_2[n][n];
+
     double t_m[n][n];
 
     int send_counts[comm_sz];
@@ -298,10 +311,10 @@ int main(void){
     // MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&total, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-    double global_m[n * n];
+    double local_m[n * n];
     // for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
-            global_m[j] = 0;
+            local_m[j] = 0;
         }
     // }
 
@@ -324,7 +337,11 @@ int main(void){
     }
     MPI_Reduce(&p_r, &total_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
-
+    double send_buf[p_r];
+    for (int i = 0; i < p_r; ++i)
+    {
+        send_buf[i] = 0.0;
+    }
     if (!strcmp(flag, "R"))
     {
         printf("random\n");
@@ -334,9 +351,9 @@ int main(void){
     else if (!strcmp(flag, "I"))
     {
         // printf("read matrix I\n");
-        readMatrix1(form, n, comm_sz, p_r, my_rank, global_m, 
-            matrix_1, t_m, send_counts, displs);
-        readMatrix2(form, n, comm_sz, matrix_2, t_m, my_rank);
+        input_matrix(form, n, comm_sz, p_r, my_rank, local_m, 
+            matrix_1, matrix_2, t_m, send_counts, displs);
+        // readMatrix2(form, n, comm_sz, matrix_2, t_m, my_rank);
         // readMatrix2();
     }
     else
@@ -346,16 +363,18 @@ int main(void){
 
     if (!strcmp(form, "ijk"))
     {
-        ijkForm(n, my_rank, p_r, global_m, matrix_2, t_m);
+        ijkForm(n, my_rank, p_r, local_m, 
+            matrix_2, t_m, send_buf);
     }
     else if (!strcmp(form, "ikj"))
     {
-         ikjForm(n, my_rank, p_r, global_m, matrix_2);
+         ikjForm(n, my_rank, p_r, local_m, 
+            matrix_2, send_buf);
     }
     else if (!strcmp(form, "kij"))
     {
-        // kijForm(n, rank, local_n, local_m_1,
-        //  local_m_2,local_result);
+        kijForm(n, my_rank, p_r, local_m, 
+            matrix_2, send_buf);
     }
     else
     {
@@ -366,6 +385,10 @@ int main(void){
 
     if(my_rank == 0){
       printf("total_sum:%d\n", total_sum);
+    }
+    for (int i = 0; i < p_r; ++i)
+    {
+        printf("rank:%d, %f \n", my_rank, send_buf[i]);
     }
       // printf("matrix_2\n");
 
