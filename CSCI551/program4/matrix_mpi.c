@@ -284,12 +284,23 @@ void print_result_matrix(
     int p_r,
     int s_c[],
     int displs[]){
-
-    for (int i = 0; i < p_r; ++i)
-    {
-        printf("rank:%d, %f \n", my_rank, rcv_buf[i]);
+    if(my_rank == 0){
+        MPI_Gatherv(rcv_buf, p_r, MPI_DOUBLE, f_m, s_c, 
+            displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        printf("my_rank:%d \n", my_rank);
+        for (int i = 0; i < n; ++i)
+        {
+            for (int j = 0; j < n; ++j)
+            {
+                printf("%d ", (int) f_m[i * n + j]);
+            }
+            printf("\n");
+        }
+    }else{
+        printf("my_rank:%d \n", my_rank);
+        MPI_Gatherv(rcv_buf, p_r, MPI_DOUBLE, f_m, s_c, 
+            displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     }
-
 }
 
 
@@ -403,8 +414,8 @@ int main(void){
       printf("total_sum:%d\n", total_sum);
     }
 
-    print_result_matrix(n, my_rank, final_matrix, send_buf, p_r, 
-        send_counts, displs); 
+    print_result_matrix(n, my_rank, final_matrix, 
+        send_buf, p_r, send_counts, displs); 
 
     MPI_Finalize();
 	return 0;
