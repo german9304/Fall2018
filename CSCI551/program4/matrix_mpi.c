@@ -79,7 +79,7 @@ void readMatrix1(
             displs[i] = sum;
             sum += send_counts[i];
         }
-        printf("\n");
+       //  printf("\n");
         MPI_Scatterv(matrix_1, send_counts, displs, MPI_DOUBLE, 
              global_m, p_r, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     }else{
@@ -143,19 +143,10 @@ void ijkForm(
     double m_1[],
     double m_2[][n])
 {
-    // printf("local_m_temp\n");
-    // for(int i = 0; i < lastP; i++){
-    //     printf("rank:%d %f\n", rank, local_m_temp[i]);
-    // }
-    // printf("local_m_1\n");
-    // for(int i = 0; i < n; i++){
-    //     for(int j = 0; j < n; j++){
-    //         printf("rank:%d, %f \n", rank, local_m_1[i][j]);
-    //     }
-    // }
     // /*
     //  serial program one processor 
     // */
+    double res = 0.0;
     for (int i = 0; i < p_r/n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -163,12 +154,16 @@ void ijkForm(
             for (int k = 0; k < n; k++)
             {
                 int ind = (i * n + k);
-                printf(" %f * %f ", m_1[ind] , m_2[j][k]);
+                // printf("%f * %f ", m_1[ind] , m_2[j][k]);
+                res += m_1[ind] * m_2[j][k];
+                // printf("%f ", res);
                 // printf("%f ", m_2[i][k]);
                 /* code */
             }
-            printf("\n");
+           printf("%f ", res);
+           res = 0.0;
         }
+         printf("\n");
     }
 }
 /**
