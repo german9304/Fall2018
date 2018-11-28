@@ -7,7 +7,7 @@
 int main(void){
     int my_rank, comm_sz, div, n;
     int p1, c1, p2, r_m, p_r;
-    int sum  = 10;
+    int sum  = 0;
     int total;
     int total_sum = 0;
     MPI_Init(NULL, NULL);
@@ -20,17 +20,24 @@ int main(void){
         total = n * n;
     }
     int sendCounts[comm_sz];
+    int displs[comm_sz];
     for(int i = 0; i < comm_sz; i++){
-        sendCounts[i] = 0.0;
+        sendCounts[i] = 0;
+        displs[i] = 0;;
     }
     MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&total, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    int numbers[25] = {
-        5,2,3,4,6, 
-        1,2,3,2,6,  
-        5,100,3,45,100,  
-        4,4,3,4,3,
-        2,7,8,9,9 };
+    int global_m[n * n];
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            global_m[i] = 0;
+        }
+    }
+    int numbers[16] = {
+        5,2,3,4, 
+        1,2,3,2,  
+        5,100,3,45,  
+        4,4,3,4};
     // int temp[10];
     r_m = n % comm_sz; //reminder
     p_r = n / comm_sz;
@@ -43,7 +50,7 @@ int main(void){
            p_r = p_r + 1;
         }
         // printf("remind:%d, div:%d \n", r_m, div);
-        printf("rank:%d, p_r:%d\n", my_rank, p_r);
+        // printf("rank:%d, p_r:%d\n", my_rank, p_r);
         // sendCounts[my_rank] = p_r;
         p_r *= n;
         MPI_Gather(&p_r, 1, MPI_INT, sendCounts, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -51,10 +58,12 @@ int main(void){
         int sub = r_m - 1;
         if(r_m > 0 && my_rank < r_m){
             p_r+=1;
-           printf("rank:%d, p_r:%d \n", my_rank, p_r);
-        }else{
-            printf("rank:%d, p_r:%d\n", my_rank, p_r);
-        }
+           // printf("rank:%d, p_r:%d \n", my_rank, p_r);
+        }/*else{
+            // printf("rank:%d, p_r:%d\n", my_rank, p_r);
+        }*/
+        // from = my_rank * p_r/comm_sz;
+        // to = (my_rank+1) * p_r/comm_sz;
         p_r *= n;
         // sendCounts[my_rank] = p_r;
         MPI_Gather(&p_r, 1, MPI_INT, sendCounts, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -108,18 +117,59 @@ int main(void){
 
 
     if(my_rank == 0){
-        printf("total_sum:%d \n", total_sum);
-    	for(int i = 0; i < comm_sz; i++){
-            printf("%d ",sendCounts[i]);
+        printf("sendcounts\n");
+        for(int i = 0; i < comm_sz; i++){
+           printf("%d ", sendCounts[i]);
         }
+    	for(int i = 0; i < comm_sz; i++){
+            displs[i] = sum;
+            sum += sendCounts[i];
+           // printf("%d ",sendCounts[i]);
+        }
+        // printf("\n");
+        // printf("displacements\n");
+        // for(int i = 0; i < comm_sz; i++){
+        //     printf("%d ",displs[i]);
+        // }
         printf("\n");
+        // printf("my_rank:%d, from:%d, to:%d\n", my_rank, from, to);
+        // printf("rank:%d, total_sum:%d p_r:%d\n", my_rank, total_sum, p_r);
+        MPI_Scatterv(numbers, sendCounts, displs, MPI_INT, 
+             global_m, p_r, MPI_INT, 0, MPI_COMM_WORLD);
+    }else{
+        printf("\n");
+        // printf("my_rank:%d, from:%d, to:%d\n", my_rank, from, to);
+        MPI_Scatterv(numbers, sendCounts, displs, MPI_INT, 
+             global_m, p_r, MPI_INT, 0, MPI_COMM_WORLD);
+        // printf("rank:%d, total_sum:%d p_r:%d\n", my_rank, total_sum, p_r);
     }
     // 	printf("\n");
     // }else{
     // 	// printf("rank:%d\n", my_rank);
-    // 	for(int i = 0; i < pr; i++){
-    // 		printf("rank:%d , %d\n",my_rank, temp[i]);
-    // 	}
+     // if(my_rank == 0){
+       //  printf("global_m\n");
+    	 // for(int i = 0; i < n; i++){
+    		// for(int j = 0; j < n; j++){
+    // int from = my_rank * p_r/n;
+    // int to = (my_rank+1) * p_r/n;
+    // printf("my_rank:%d, n:%d \n", my_rank, p_r/n);
+    // MPI_Barrier(MPI_COMM_WORLD);
+    if(my_rank == 0){
+        for (int i = 0; i < p_r/n; ++i)
+        {
+            for(int k = 0; k < n; k++){
+                int ind = (i * n + k);
+                    printf("%d ",global_m[ind]);
+            }
+            printf("\n");
+            /* code */
+        }
+    }
+            // }
+        // }
+             // printf("\n");
+     // }
+    // }
     // 	printf("\n");
     // }
 
