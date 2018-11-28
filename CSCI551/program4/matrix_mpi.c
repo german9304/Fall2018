@@ -9,6 +9,7 @@ int main(void){
     int p1, c1, p2, r_m, p_r;
     int sum  = 10;
     int total;
+    int total_sum = 0;
     MPI_Init(NULL, NULL);
     MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
@@ -17,6 +18,10 @@ int main(void){
         scanf("%d", &n);
         printf("%d\n",n);
         total = n * n;
+    }
+    int sendCounts[comm_sz];
+    for(int i = 0; i < comm_sz; i++){
+        sendCounts[i] = 0.0;
     }
     MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&total, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -39,15 +44,23 @@ int main(void){
         }
         // printf("remind:%d, div:%d \n", r_m, div);
         printf("rank:%d, p_r:%d\n", my_rank, p_r);
+        // sendCounts[my_rank] = p_r;
+        p_r *= n;
+        MPI_Gather(&p_r, 1, MPI_INT, sendCounts, 1, MPI_INT, 0, MPI_COMM_WORLD);
     }else{
         int sub = r_m - 1;
         if(r_m > 0 && my_rank < r_m){
-           printf("rank:%d, p_r:%d \n", my_rank, p_r + 1);
+            p_r+=1;
+           printf("rank:%d, p_r:%d \n", my_rank, p_r);
         }else{
             printf("rank:%d, p_r:%d\n", my_rank, p_r);
         }
+        p_r *= n;
+        // sendCounts[my_rank] = p_r;
+        MPI_Gather(&p_r, 1, MPI_INT, sendCounts, 1, MPI_INT, 0, MPI_COMM_WORLD);
         // printf("rank:%d, p_r:%d\n", my_rank, p_r);
     }
+    MPI_Reduce(&p_r, &total_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
     // div = n / comm_sz;
     // int sendCounts[comm_sz];
     // int dpls[comm_sz];
@@ -94,11 +107,13 @@ int main(void){
     // }
 
 
-    // if(my_rank == 0){
-    // 	// printf("rank:%d\n", my_rank);
-    // 	for(int i = 0; i < 10; i++){
-    //         printf("rank:%d , %d\n",my_rank, temp[i]);
-    // 	}
+    if(my_rank == 0){
+        printf("total_sum:%d \n", total_sum);
+    	for(int i = 0; i < comm_sz; i++){
+            printf("%d ",sendCounts[i]);
+        }
+        printf("\n");
+    }
     // 	printf("\n");
     // }else{
     // 	// printf("rank:%d\n", my_rank);
