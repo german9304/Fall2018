@@ -175,22 +175,13 @@ void ijkForm(
  */
 void ikjForm(
     int n,
-    int rank,
-    int local_n,
-    double local_m_1[],
-    double local_m_2[],
-    double local_result[])
+    int my_rank,
+    int p_r,
+    double m_1[],
+    double m_2[][n])
 {
-    double recvData[n * n];
-    // if(rank == 0){
-    // local_result[0] = 23;
-    // for(int i = 0; i < local_n; i++){
-    //     local_result[i] = 0.0;
-    // }
-    MPI_Allgather(local_m_2, local_n, MPI_DOUBLE,
-                  recvData, local_n, MPI_DOUBLE, MPI_COMM_WORLD);
-    rank++;
-    for (int i = 0; i < n; i++)
+
+    for (int i = 0; i < p_r/n; i++)
     {
         for (int j = 0; j < n; j++)
         {
@@ -201,8 +192,8 @@ void ikjForm(
                 int ind = (i * n + k);
                 int mult = (n * j + k);
                 // local_result[ind] += (local_m_1[ind_res] * recvData[ind]);
-                // printf("rank:%d, %d , %d, %d \n", rank, ind, ind_res, mult);
-                local_result[ind] += (local_m_1[ind_res] * recvData[mult]);
+                printf("rank:%d, %d , %d, %d \n", my_rank, ind, ind_res, mult);
+                // local_result[ind] += (local_m_1[ind_res] * recvData[mult]);
                 // printf("%f * %f = %f \n", local_m_1[ind_res],
                 // recvData[mult], local_result[ind]);
                 // res+= (local_m_1[ind_res] * recvData[ind]);
@@ -354,8 +345,7 @@ int main(void){
     }
     else if (!strcmp(form, "ikj"))
     {
-        // ikjForm(n, rank, local_n, local_m_1,
-        //         local_m_2, local_result);
+         ikjForm(n, my_rank, p_r, global_m, t_m);
     }
     else if (!strcmp(form, "kij"))
     {
