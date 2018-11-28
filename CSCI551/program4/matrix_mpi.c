@@ -180,7 +180,7 @@ void ijkForm(
                 /* code */
             }
         }
-         printf("\n");
+         // printf("\n");
     }
    //  printf("rank:%d \n", my_rank);
 }
@@ -276,6 +276,21 @@ void kijForm(
     }
 }
 
+void print_result_matrix(
+    int n, 
+    int my_rank,
+    double f_m[], 
+    double rcv_buf[],
+    int p_r,
+    int s_c[],
+    int displs[]){
+
+    for (int i = 0; i < p_r; ++i)
+    {
+        printf("rank:%d, %f \n", my_rank, rcv_buf[i]);
+    }
+
+}
 
 
 int main(void){
@@ -299,11 +314,12 @@ int main(void){
     total = n * n;
     double matrix_1[n][n];
     double matrix_2[n][n];
+    double final_matrix[n * n];
 
     double t_m[n][n];
-
     int send_counts[comm_sz];
     int displs[comm_sz];
+
     for(int i = 0; i < comm_sz; i++){
         send_counts[i] = 0;
         displs[i] = 0;
@@ -386,32 +402,9 @@ int main(void){
     if(my_rank == 0){
       printf("total_sum:%d\n", total_sum);
     }
-    for (int i = 0; i < p_r; ++i)
-    {
-        printf("rank:%d, %f \n", my_rank, send_buf[i]);
-    }
-      // printf("matrix_2\n");
 
-    //    for (int i = 0; i < n; ++i)
-    //     {
-    //         for(int j = 0; j < n; j++){
-    //                printf("%f ", t_m[i][j]);
-    //         }
-    //         printf("\n");
-    //         /* code */
-    //     }
-    // }
-    //     for (int i = 0; i < p_r/n; ++i)
-    //     {
-    //         for(int k = 0; k < n; k++){
-    //            int ind = (i * n + k);
-    //                printf("%f ",global_m[ind]);
-    //         }
-    //         printf("\n");
-    //         /* code */
-    //     }
-    // }
-
+    print_result_matrix(n, my_rank, final_matrix, send_buf, p_r, 
+        send_counts, displs); 
 
     MPI_Finalize();
 	return 0;
