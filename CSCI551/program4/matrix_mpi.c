@@ -210,17 +210,18 @@ void ikjForm(
     {
         for (int k = 0; k < n; k++)
         {
-            // int ind_res = (i * n) + k;
+            int ind_res = (i * n) + k;
             // double res = 0.0;
             for (int j = 0; j < n; j++)
             {
-                // int ind = (i * n + j);
-                // int mult = (n * j + k);
+                int ind = (i * n + j);
+                int mult = (n * j + k);
                 // local_result[ind] += (local_m_1[ind_res] * recvData[ind]);
                 // printf("rank:%d, %d , %d, %d \n", my_rank, ind, ind_res, mult);
                 // local_result[ind] += (local_m_1[ind_res] * m_2[k][j]);
-                printf("rank:%d, %f * %f \n",
-                my_rank,  m_1[(i * n) + k], m_2[k][j]);
+               // printf("rank:%d, %f * %f \n",
+                // my_rank,  m_1[(i * n) + k], m_2[k][j]);
+               r_m[i * n + j] += m_1[(i * n) + k] * m_2[k][j];
                 // res+= (local_m_1[ind_res] * recvData[ind]);
                 // local_result[ind_res]
             }
