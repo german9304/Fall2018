@@ -251,55 +251,66 @@ void kijForm(
     transpose_matrix(n, m_2, t_m);
     // printf("my_rank:%d\n", my_rank);
     // if(my_rank == 0){
-      for (int i = 0; i < n; ++i)
-       {
-            for (int j = 0; j < n; ++j)
-            {
-                printf("%d, %d ", my_rank, (int) local_m_2[i*n+j]);
-            }
-            printf("\n");
-        }
+   //  printf("\n");
+      // for (int i = 0; i < p_r/n; ++i)
+      //  {
+      //       for (int j = 0; j < n; ++j)
+      //       {
+      //           printf("%d, %d \n", my_rank, (int) local_m_2[i*n+j]);
+      //       }
+      //       printf("\n");
+      //   }
     // }
     // double sum[4];
     for (int k = 0; k < p_r/n; k++)
     {
         for (int i = 0; i < n; i++)
         {
-            int ind_res = (k * n) + i;
+     int ind_res = i * n + k;
             for (int j = 0; j < n; j++)
             {
-                int ind = (k * n + j);
-                int mult = (n * i + j);
-               
-               if(comm_sz == 1){
-                // printf("r_m\n");
-                r_m[n * i + j] += m_1[(k * n) + i] * m_2[my_rank + k][j];
-               }else{
-                if(my_rank == 1){
-                     // printf("%d, %d, %d, %d, %d\n", 
-                     // ind_res, mult ,(my_rank * n) + k, j, ind);
-                // printf("%d, %d, %d, %d\n", 
-                // (int) m_1[(k * n) + i], (int) m_2[my_rank + k][j], ind, mult);
-                // sikj_b[n * i + j] = m_1[(k * n) + i] * m_2[my_rank + k][j];
-                // printf("%d,%d * %d ", my_rank, (int) m_1[(k * n) + i], (int) m_2[my_rank + k][j]);
-                 }    
-               }
-               // printf("my_rank:%d, %d, %d * %d = %d \n", my_rank, 
-               //  n * i + j, (int) m_1[(k * n) + i], (int) m_2[my_rank + k][j], 
-               //  (int)r_m[n * i + j]);
-            }
-             if(my_rank == 1){
-             printf("\n");
-         }
+                int ind = (k * n + i);
+                // int ind_res = (my_rank + i);
+                int mult = (k * n + j);
+                // if(my_rank == 0){
+                // printf("my_rank:%d, %d, %d, %d, %d, %d\n", my_rank, i * n + j, mult, ind, 
+                //     (int) m_1[k * n + i], (int) local_m_2[k * n + j]);
+                // }
+                // printf("%d, %d, %d, %d, %d\n", 
+                //      ind_res, mult , ind, my_rank, (int) local_m_2[(k * n) + i]);
+                // printf("%d, %d, %d \n", my_rank, (int) m_1[i * n + j], (int) local_m_2[n * i + j]);
+         //       if(comm_sz == 1){
+         //        // printf("r_m\n");
+         //        r_m[n * i + j] += m_1[(k * n) + i] * m_2[my_rank + k][j];
+         //       }else{
+         //        if(my_rank == 1){
+         //             // printf("%d, %d, %d, %d, %d\n", 
+         //             // ind_res, mult ,(my_rank * n) + k, j, ind);
+         //        // printf("%d, %d, %d, %d\n", 
+         //        // (int) m_1[(k * n) + i], (int) m_2[my_rank + k][j], ind, mult);
+          sikj_b[i * n + j] += m_1[k * n + i] * local_m_2[k * n + j];
+         //        // printf("%d,%d * %d ", my_rank, (int) m_1[(k * n) + i], (int) m_2[my_rank + k][j]);
+         //         }    
+         //       }
+         //       // printf("my_rank:%d, %d, %d * %d = %d \n", my_rank, 
+         //       //  n * i + j, (int) m_1[(k * n) + i], (int) m_2[my_rank + k][j], 
+         //       //  (int)r_m[n * i + j]);
+         //    }
+         //     if(my_rank == 1){
+         //     //printf("\n");
+          printf("%d\n", (int) sikj_b[i * n + j]);
+          }
+
         }
     }
+
     // printf("p_r for loop\n");
     // for (int i = 0; i < p_r * n; ++i)
     // {
     //     printf("my_rank:%d, %d \n", my_rank, (int)t_b[i]);
     // }
     // printf("my_rank:%d\n", my_rank);
-   //  MPI_Reduce(t_b, sum, 4, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+   // MPI_Reduce(t_b, sum, 4, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
     // if(my_rank == 0){
     //     for (int i = 0; i < 4; ++i)
@@ -413,7 +424,7 @@ int main(void){
     double send_buf[p_r];
     double kij_buf[p_r/n * n * n];
 
-    printf("after p_r:%d\n", p_r/n * n * n);
+    // printf("after p_r:%d\n", p_r/n * n * n);
     // MPI_Bcast(test_buf, p_r * p_r, MPI_INT, 0, MPI_COMM_WORLD);
     for (int i = 0; i < p_r; ++i)
     {
@@ -459,9 +470,9 @@ int main(void){
 
 
 
-    if(my_rank == 0){
-      printf("total_sum:%d\n", total_sum);
-    }
+    // if(my_rank == 0){
+    //   printf("total_sum:%d\n", total_sum);
+    // }
 
     print_result_matrix(n, comm_sz, form, my_rank, final_matrix, 
         send_buf, kij_buf, p_r, send_counts, displs); 
