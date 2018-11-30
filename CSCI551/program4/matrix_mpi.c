@@ -298,7 +298,7 @@ void kijForm(
          //    }
          //     if(my_rank == 1){
          //     //printf("\n");
-          printf("%d\n", (int) sikj_b[i * n + j]);
+          // printf("%d\n", (int) sikj_b[i * n + j]);
           }
 
         }
@@ -331,7 +331,7 @@ void print_result_matrix(
     int p_r,
     int s_c[],
     int displs[]){
-    if(!strcmp(form, "kij") && comm_sz > 1){
+    if(!strcmp(form, "kij")){
         MPI_Reduce(kij_buf, f_m, n * n, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     }else{
         MPI_Gatherv(rcv_buf, p_r, MPI_DOUBLE, f_m, s_c, 
@@ -397,7 +397,8 @@ int main(void){
     double local_m_2[n * n];
     // for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
-            local_m[j] = 0;
+            local_m[j] = 0.0;
+            local_m_2[n * n] = 0.0;
         }
     // }
 
@@ -423,12 +424,18 @@ int main(void){
 
     double send_buf[p_r];
     double kij_buf[p_r/n * n * n];
+    for (int i = 0; i < p_r/n * n * n; ++i)
+    {
+        kij_buf[i] = 0.0;
+        /* code */
+    }
 
     // printf("after p_r:%d\n", p_r/n * n * n);
     // MPI_Bcast(test_buf, p_r * p_r, MPI_INT, 0, MPI_COMM_WORLD);
     for (int i = 0; i < p_r; ++i)
     {
         send_buf[i] = 0.0;
+       //  kij_buf[p_r/n * n * n] = 0.0;
     }
     if (!strcmp(flag, "R"))
     {
