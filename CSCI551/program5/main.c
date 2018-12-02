@@ -45,7 +45,7 @@ void initMatrixVector(double **matrix, int n)
 * @return none 
 *
 */
-void printMatrix(double **matrix, int n)
+void printMatrix(int n, double **matrix)
 {
   for (int i = 0; i < n; i++)
   {
@@ -182,38 +182,76 @@ void Back_substitution(double **matrix, double *vec){
 
 }
 
-int partial_pivoting(int n, double **matrix){
-  double max = fabsf(matrix[0][0]);
-  double row = 0;
+int partial_pivoting(int n, int step, const double **matrix){
+  double max = fabsf(matrix[step][step]);
+  printf("step:%d\n", step);
+  double row = step;
   // for (int i = 0; i < 1; i++)
   // {
-
-    for (int i = 0; i < n; i++)
-    {
-      double ij = fabsf(matrix[i][0]);
+  for (int i = step; i < n; i++)
+  {
+      double ij = fabsf(matrix[i][step]);
+      printf("%f %d\n", ij, n);
       if(ij > max){
         max = ij;
         row = i;
       }
-    }
-    return row;
+  }
+  return row;
   // }
 }
 
-void swap_rows(){
+void copy_matrix(int n, const double ** matrix, double **c_m){
+  for (int i = 0; i < n; i++)
+  {
+    for (int j = 0; j < n + 1; j++)
+    {
+      c_m[i][j] = matrix[i][j];
+    }
+  }
+}
+double **swap_rows(int n, int row, int max_row, const double **matrix){
+  double **c_m = (double **)malloc(sizeof(double *) * n);
+  int n_r = n + 1;
+  double r_t[n + 1];
+  initMatrixVector(c_m, n + 1);
+  copy_matrix(n, matrix, c_m);
+  printf("copy_matrix\n");
+  printMatrix(n, c_m);
+  for (int i = 0; i < n_r; ++i)
+  {
+    r_t[i] = c_m[row][i];
+  }
+  printf("temp matrix\n");
+  for (int i = 0; i < n_r; ++i)
+  {
+    printf("%f ", r_t[i]);
+  }
+  for (int i = 0; i < n_r; ++i)
+  {
+    c_m[row][i] = c_m[max_row][i];
+  }
 
+  for (int i = 0; i < n_r; ++i)
+  {
+    c_m[max_row][i] = r_t[i];
+  }
+  printf("\n");
+  printf("result matrix\n");
+  printMatrix(n, c_m);
+  printf("\n");
+  return c_m;
 }
 
-void Gauss_elimination(int n, double **matrix, double *vec){
+void Gauss_elimination(int n, const double **matrix, double *vec){
   int steps = n - 1;
-
-  for (int s = 0; s < 1; s++)
+  double ** r_m = NULL; 
+  for (int s = 0; s < steps; s++)
   {
-    int max_row = partial_pivoting(n, matrix);
+    int max_row = partial_pivoting(n, s, matrix);
     printf("%d\n", max_row);
-    if(max_row != 0){
-
-    }
+    // r_m = swap_rows(n, s, max_row, matrix);
+    
   }
 
 }
@@ -221,7 +259,11 @@ void Gauss_elimination(int n, double **matrix, double *vec){
 
 int main(int argc, char* argv[]){
   int n = strtol(argv[1], NULL, 10);
-  int thread_count = strtol(argv[2], NULL, 10);
+  int thread_count = 0;
+  if (argc > 2)
+  {
+    thread_count = strtol(argv[2], NULL, 10);
+  }
 
  
 // #  pragma omp parallel num_threads(thread_count)
@@ -242,7 +284,7 @@ int main(int argc, char* argv[]){
     createRandomMatrix(matrix, n, ns);
   }
 
-  Gauss_elimination(n, matrix, vec);
+  Gauss_elimination(n, (const double **) matrix, vec);
   // if (n < 11)
   // {
   //   printMatrix(matrix, n);
