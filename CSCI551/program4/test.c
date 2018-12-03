@@ -211,8 +211,8 @@ int main(void)
 				for (j = 0; j < matrixSize; j++)
 				{
 					local_c[i * matrixSize + j] += r * b[k * matrixSize + j];
-					printf("r:%d, b:%d, rank:%d local_c[%d]=%d\n", r, b[k * matrixSize + j], my_rank,
-				 i * matrixSize + j, local_c[i * matrixSize + j]);
+					// printf("r:%d, b:%d, rank:%d local_c[%d]=%d\n", r, b[k * matrixSize + j], my_rank,
+				 // i * matrixSize + j, local_c[i * matrixSize + j]);
 				}
 			}
 		}
@@ -231,8 +231,8 @@ int main(void)
 				for (j = 0; j < matrixSize; j++)
 				{
 					local_c[i * matrixSize + j] += r * b[k * matrixSize + j];
-					printf("r:%d, b:%d, rank:%d local_c[%d]=%d\n", r, b[k * matrixSize + j], my_rank,
-				 i * matrixSize + j, local_c[i * matrixSize + j]);
+					// printf("r:%d, b:%d, rank:%d local_c[%d]=%d\n", r, b[k * matrixSize + j], my_rank,
+				 // i * matrixSize + j, local_c[i * matrixSize + j]);
 				}
 			}
 		}

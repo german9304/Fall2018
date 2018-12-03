@@ -8,15 +8,15 @@
 
 void transpose_matrix(
     int n,
-    int matrix_2[][n],
-    int transpose_matrix[][n])
+    int **m_2,
+    int **t_m)
 {
 
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
         {
-            transpose_matrix[i][j] = matrix_2[j][i];
+            t_m[i][j] = m_2[j][i];
         } //for
     }     //for
 } //transpose_matrix
@@ -47,8 +47,8 @@ void getUserInput(int *n, char form[], char flag[], int rank)
 void input_matrix(
     int n,
     int my_rank, 
-    int matrix_1[][n],
-    int matrix_2[][n])
+    int **matrix_1,
+    int *matrix_2)
 {
 
     if (my_rank == 0)
@@ -62,13 +62,19 @@ void input_matrix(
             }
         } //for
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n * n; i++)
         {
-            for (int j = 0; j < n; j++)
-            {
-                scanf("%d", &matrix_2[i][j]);
-            }
+           
+                scanf("%d", &matrix_2[i]);
         } //for
+        // for (int i = 0; i < n * n; ++i)
+        // {
+        //     scanf("%d", &matrix_1[i]);
+        // }
+        //  for (int i = 0; i < n * n; ++i)
+        // {
+        //     scanf("%d", &matrix_2[i]);
+        // }
     }
 
     // if(my_rank == 0){
@@ -103,8 +109,8 @@ void input_matrix(
 void random_matrix(
     int n,
     int my_rank, 
-    int matrix_1[][n],
-    int matrix_2[][n])
+    int **matrix_1,
+    int *matrix_2)
 {
     srand (time(0));
 
@@ -120,13 +126,10 @@ void random_matrix(
             }
         } //for
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n * n; i++)
         {
-            for (int j = 0; j < n; j++)
-            {
                //  scanf("%lf", &matrix_2[i][j]);
-                matrix_2[i][j] = rand() % 100;
-            }
+                matrix_2[i] = rand() % 100;
         } //for
     }
 
@@ -156,13 +159,15 @@ void scatter_matrix(
     int comm_sz,
     int p_r,
     int my_rank, 
-    int local_m[],
-    int local_m_2[],
-    int matrix_1[][n],
-    int matrix_2[][n],
-    int t_m[][n],
-    int send_counts[],
-    int displs[n]){
+    int *local_m,
+    int *local_m_2,
+    int **matrix_1,
+    int *matrix_2,
+    int *t_m_1,
+    int *t_m_2,
+    int **t_m,
+    int *send_counts,
+    int *displs){
 
     if(my_rank == 0){
         int sum = 0;
@@ -171,19 +176,54 @@ void scatter_matrix(
             sum += send_counts[i];
         }
     }
+  
+
+     // printf("matrix_1 ijk\n");
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                // printf("%d ", matrix_1[i][j]);
+                t_m_1[i*n+j] = matrix_1[i][j];
+            }
+            // printf("\n");
+        } //for
+         // printf("matrix_2 ijk\n");
+        // for (int i = 0; i < n; i++)
+        // {
+        //     for (int j = 0; j < n; j++)
+        //     {
+        //          t_m_2[i*n+j] = matrix_2[i][j];
+        //     }
+        //     // printf("\n");
+        // } //for
     
     if (!strcmp(form, "kij"))
     {
         transpose_matrix(n, matrix_1, t_m);
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                // printf("%d ", matrix_1[i][j]);
+                t_m_1[i*n+j] = t_m[i][j];
+            }
+            // printf("\n");
+        } //for
 
-        MPI_Scatterv(t_m, send_counts, displs, MPI_INT, 
+        MPI_Scatterv(t_m_1, send_counts, displs, MPI_INT, 
         local_m, p_r, MPI_INT, 0, MPI_COMM_WORLD);
 
         MPI_Scatterv(matrix_2, send_counts, displs, MPI_INT, 
         local_m_2, p_r, MPI_INT, 0, MPI_COMM_WORLD);
 
     }else{
-        MPI_Scatterv(matrix_1, send_counts, displs, MPI_INT, 
+        // int * test = (int *)malloc(sizeof(int*)*n);
+        // for (int i = 0; i < n; ++i)
+        // {
+        //     test[i] = 1;
+        // }
+        MPI_Scatterv(t_m_1, send_counts, displs, MPI_INT, 
         local_m, p_r, MPI_INT, 0, MPI_COMM_WORLD);
 
         MPI_Bcast(matrix_2, n * n, MPI_INT, 0, MPI_COMM_WORLD);
@@ -194,8 +234,8 @@ void readMatrix2(
     char form[],
     int n,
     int comm_sz,
-    int matrix_2[][n],
-    int t_m[n][n],
+    int **matrix_2,
+    int **t_m,
     int rank)
 {
     if (rank == 0)
@@ -246,22 +286,57 @@ void ijkForm(
     int n,
     int my_rank,
     int p_r,
-    int m_1[],
-    int m_2[][n],
-    int t_m[][n],
-    int r_m[])
+    int *m_1,
+    int *m_2,
+    int **t_m,
+    int *r_m)
 {
-    transpose_matrix(n, m_2, t_m);
+    // transpose_matrix(n, m_2, t_m);
+  // printf("my_rank:%d\n", my_rank);
+   //   int **t_m_2 = (int **)malloc(sizeof(int**)* n);
+   //   for (int i = 0; i < n; i++)
+   //   {
+   //        t_m_2[i] = (int*)malloc(n * sizeof(int));
+   //   }
+   //    for (int i = 0; i < n; i++)
+   //      {
+   //          for (int j = 0; j < n; j++)
+   //          {
+   //               t_m_2[i][j] = m_2[i*n+j]; 
+   //          }
+   //          // printf("\n");
+   //      } //for
+   //      // transpose_matrix(n, t_m_2, t_m);
+    // if(my_rank == 0){
+    // int **t_m_2 = (int **)malloc(sizeof(int**)* n);
+    //  for (int i = 0; i < n; i++)
+    //  {
+    //       t_m_2[i] = (int*)malloc(n * sizeof(int));
+    //  }
+    //   for (int i = 0; i < n; i++)
+    //     {
+    //         for (int j = 0; j < n; j++)
+    //         {
+    //              t_m_2[i][j] = m_2[i*n+j]; 
+    //         }
+    //         // printf("\n");
+    //     } //for
+    //     // transpose_matrix(n, t_m_2, t_m);
+    // }
+
     for (int i = 0; i < p_r/n; i++)
     {
         for (int j = 0; j < n; j++)
         {
             for (int k = 0; k < n; k++)
             {
-                r_m[i * n + j] += m_1[i * n + k] * t_m[j][k];
+                r_m[i * n + j] += m_1[i * n + k] * m_2[k * n + j];
+                // printf("%d %d * %d", r_m[i * n + j], m_1[i * n + k], 
+                //     m_2[k * n + j]);
             }
         }
     }
+    
 }
 /**
  * @brief 
@@ -274,18 +349,31 @@ void ikjForm(
     int n,
     int my_rank,
     int p_r,
-    int m_1[],
-    int m_2[][n],
-    int r_m[])
+    int *m_1,
+    int *m_2,
+    int *r_m)
 {
+    // int **t_m_2 = (int **)malloc(sizeof(int**)* n);
+    // for (int i = 0; i < n; i++)
+    // {
+    //     t_m_2[i] = malloc(sizeof(int*)*n);
+    //     for (int j = 0; j < n; j++)
+    //     {
+    //         t_m_2[i][j] = m_2[i*n+j]; 
+    //     }
+    //         // printf("\n");
+    // } //for
+
     for (int i = 0; i < p_r/n; i++)
     {
         for (int k = 0; k < n; k++)
         {
             for (int j = 0; j < n; j++)
             {
-                r_m[i * n + j] += m_1[(i * n) + k] * m_2[k][j];
+                r_m[i * n + j] += m_1[(i * n) + k] * m_2[k * n + j];
+                // printf(" %d", r_m[i * n + j] );
             }
+            // printf("\n");
         }
     }
 }
@@ -301,14 +389,14 @@ void kijForm(
     int comm_sz,
     int my_rank,
     int p_r,
-    int m_1[],
-    int local_m_2[],
-    int m_2[][n],
-    int t_m[][n],
-    int r_m[], 
-    int sikj_b[])
+    int *m_1,
+    int *local_m_2,
+    int *m_2,
+    int **t_m,
+    int * r_m, 
+    int * sikj_b)
 {
-    transpose_matrix(n, m_2, t_m);
+    // transpose_matrix(n, m_2, t_m);
     for (int k = 0; k < p_r/n; k++)
     {
         for (int i = 0; i < n; i++)
@@ -326,12 +414,15 @@ void kijForm(
 
 void print_result_matrix(
     int n, 
+    double start_time, 
+    double finish_time,
     int comm_sz,
     char form[],
+    char flag[],
     int my_rank,
-    int f_m[], 
-    int rcv_buf[],
-    int kij_buf[],
+    int *f_m, 
+    int *rcv_buf,
+    int *kij_buf,
     int p_r,
     int s_c[],
     int displs[]){
@@ -344,14 +435,19 @@ void print_result_matrix(
 
     if(my_rank == 0){
         // printf("my_rank:%d \n", my_rank);
-        for (int i = 0; i < n; ++i)
-        {
-            for (int j = 0; j < n; ++j)
+        finish_time = MPI_Wtime();
+        printf("elapsed time = %.6e seconds\n", finish_time - start_time);
+
+        if(!strcmp(flag, "I")){
+            for (int i = 0; i < n; ++i)
             {
-                printf("%d ", f_m[i * n + j]);
+                for (int j = 0; j < n; ++j)
+                {
+                    printf("%d ", f_m[i * n + j]);
+                }
+                printf("\n");
             }
-            printf("\n");
-        }
+       }
     }// }else{
     //    // printf("my_rank:%d \n", my_rank);
     //     MPI_Gatherv(rcv_buf, p_r, MPI_DOUBLE, f_m, s_c, 
@@ -360,8 +456,13 @@ void print_result_matrix(
 }
 
 
-
-
+void init_matrix(int n, int **m_1, int **t_m){
+  for (int i = 0; i < n; ++i)
+  {
+      m_1[i] = (int *)malloc(sizeof(int *) * n);
+      t_m[i] = (int *)malloc(sizeof(int *) * n);
+  }
+}
 
 int main(void){
 
@@ -373,6 +474,7 @@ int main(void){
     int sum  = 0;
     int total;
     int total_sum = 0;
+    double start_time, finish_time;
 
     MPI_Init(NULL, NULL);
 
@@ -382,13 +484,25 @@ int main(void){
     getUserInput(&n, form, flag, my_rank);
 
     total = n * n;
-    int matrix_1[n][n];
-    int matrix_2[n][n];
-    int final_matrix[n * n];
+    // int matrix_1[n][n];
+    // int matrix_2[n][n];
+    // int final_matrix[n * n];
+    int **matrix_1 = (int **)malloc(sizeof(int **) * n);
+    int *matrix_2 = (int *)malloc(sizeof(int) * n * n);
 
-    int t_m[n][n];
-    int send_counts[comm_sz];
-    int displs[comm_sz];
+    int * t_m_1 = (int *)malloc(sizeof(int*)* n * n);
+    int * t_m_2 = (int *)malloc(sizeof(int*)* n * n);
+
+    int * final_matrix = (int *)malloc(sizeof(int *) * n * n);
+
+    // int t_m[n][n];
+    int **t_m = (int **)malloc(sizeof(int **) * n);
+    init_matrix(n, matrix_1, t_m);
+    // int send_counts[comm_sz];
+    // int displs[comm_sz];
+
+    int * send_counts = (int *)malloc(sizeof(int *) * comm_sz);
+    int * displs = (int *)malloc(sizeof(int *) * comm_sz);
 
     for(int i = 0; i < comm_sz; i++){
         send_counts[i] = 0;
@@ -397,14 +511,27 @@ int main(void){
     // MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&total, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-    int local_m[n * n];
-    int local_m_2[n * n];
+    // int local_m[n * n];
+    // int local_m_2[n * n];
+
+    int * local_m = (int *)malloc(sizeof(int *) *  n * n);
+    int * local_m_2 = (int *)malloc(sizeof(int *) *  n * n);
+
     // for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
-            local_m[j] = 0.0;
-            local_m_2[n * n] = 0.0;
+        for(int i = 0; i < n * n; i++){
+            // local_m[j] = 0.0;
+            // local_m_2[n * n] = 0.0;
+            local_m[i] = 0;
+            local_m_2[i] = 0;
         }
     // }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (my_rank == 0)
+    {
+        // Record the Start Time
+        printf("running on %d processors\n", comm_sz);
+        start_time = MPI_Wtime();
+    }
 
     r_m = n % comm_sz; //reminder
     p_r = n / comm_sz;
@@ -426,21 +553,27 @@ int main(void){
     }
     MPI_Reduce(&p_r, &total_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
-    int send_buf[p_r];
-    int kij_buf[p_r/n * n * n];
-    for (int i = 0; i < p_r/n * n * n; ++i)
+    // int send_buf[p_r];
+    // int kij_buf[p_r/n * n * n];
+    int * send_buf = (int *)malloc(sizeof(int *) * p_r);
+    int * kij_buf = (int *)malloc(sizeof(int *) * n * n);
+    for (int i = 0; i <  n * n; ++i)
     {
-        kij_buf[i] = 0.0;
+        kij_buf[i] = 0;
         /* code */
+    }
+    for (int i = 0; i < p_r; ++i)
+    {
+        send_buf[i] = 0;
     }
 
     // printf("after p_r:%d\n", p_r/n * n * n);
     // MPI_Bcast(test_buf, p_r * p_r, MPI_INT, 0, MPI_COMM_WORLD);
-    for (int i = 0; i < p_r; ++i)
-    {
-        send_buf[i] = 0;
-       //  kij_buf[p_r/n * n * n] = 0.0;
-    }
+    // for (int i = 0; i < p_r; ++i)
+    // {
+    //     send_buf[i] = 0;
+    //    //  kij_buf[p_r/n * n * n] = 0.0;
+    // }
     if (!strcmp(flag, "R"))
     {
         // randomMatrix(n, matrix_1, matrix_2);
@@ -457,12 +590,13 @@ int main(void){
     }
 
     scatter_matrix(form, n, comm_sz, p_r, my_rank, local_m, 
-        local_m_2, matrix_1, matrix_2, t_m, send_counts, displs);
+        local_m_2, matrix_1, matrix_2, t_m_1, t_m_2, t_m, send_counts, 
+        displs);
 
     if (!strcmp(form, "ijk"))
     {
         ijkForm(n, my_rank, p_r, local_m, 
-            matrix_2, t_m, send_buf);
+             matrix_2, t_m, send_buf);
     }
     else if (!strcmp(form, "ikj"))
     {
@@ -475,21 +609,22 @@ int main(void){
         kijForm(n, comm_sz, my_rank, p_r, local_m, 
             local_m_2, matrix_2, t_m, send_buf, kij_buf);
     }
-    else
-    {
-        printf("rank:%d error command ijk\n", my_rank);
-    }
+    // else
+    // {
+    //     printf("rank:%d error command ijk\n", my_rank);
+    // }
 
 
 
-    if(my_rank == 0){
-      printf("total_sum:%d\n", total_sum);
-    }
+    // if(my_rank == 0){
+    //   printf("total_sum:%d\n", total_sum);
+    // }
 
-    print_result_matrix(n, comm_sz, form, my_rank, final_matrix, 
-        send_buf, kij_buf, p_r, send_counts, displs); 
+    print_result_matrix(n, start_time, finish_time, comm_sz, 
+        form, flag, my_rank, final_matrix, send_buf, kij_buf, p_r,
+         send_counts, displs); 
 
     MPI_Finalize();
-	return 0;
+    return 0;
 }
 
