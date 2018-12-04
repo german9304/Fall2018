@@ -189,6 +189,7 @@ int main(void)
 				for (k = 0; k < matrixSize; k++)
 				{
 					sum += local_a[i * matrixSize + k] * b[k * matrixSize + j];
+					// printf("my_rank%d, %d * %d\n",  my_rank, local_a[i * matrixSize + k] , b[k * matrixSize + j] );
 				}
 
 				local_c[i * matrixSize + j] = sum;
@@ -231,6 +232,7 @@ int main(void)
 				for (j = 0; j < matrixSize; j++)
 				{
 					local_c[i * matrixSize + j] += r * b[k * matrixSize + j];
+					// printf(" %d, my_rank:%d %d * %d, %d\n",i * matrixSize + k,  my_rank, r , b[k * matrixSize + j], k * matrixSize + j);
 					// printf("r:%d, b:%d, rank:%d local_c[%d]=%d\n", r, b[k * matrixSize + j], my_rank,
 				 // i * matrixSize + j, local_c[i * matrixSize + j]);
 				}
