@@ -149,7 +149,7 @@ void initVector(double *vec, int n)
 * @return none 
 *
 */
-void printVector(double *vec, int n)
+void printVector(int n, double *vec)
 {
   for (int i = 0; i < n; i++)
   {
@@ -224,9 +224,6 @@ double **swap_rows(int n, int row, int max_row, double **c_m){
 }
 
 
-void Back_substitution(int n, double **c_m){
-
-}
 
 double * m_d(int n, int r, double r_v, int s, double ** c_m){
   double *mult= (double *)malloc(sizeof(double) * n + 1);
@@ -246,8 +243,8 @@ double * m_d(int n, int r, double r_v, int s, double ** c_m){
 
 double ** Forward_elimination(int n, int s, double **c_m){
 
-  printf("step:%d, %f\n", s, c_m[s][s]);
-  printf("Forward_elimination\n");
+  // printf("step:%d, %f\n", s, c_m[s][s]);
+  // printf("Forward_elimination\n");
   double r_v = c_m[s][s];
    for (int i = s + 1; i < n; ++i)
    {
@@ -263,15 +260,39 @@ double ** Forward_elimination(int n, int s, double **c_m){
     {
       c_m[i][j] = r_a[j];
     }
-    printf("i:%d\n", i);
-    printMatrix(n, c_m);
   }
    return c_m;
 }
 
+void Back_substitution(int n, double **c_m, double *res){
+  double l_r = c_m[n - 1][n];
+  double p_r = c_m[n - 1][n - 1];
+  res[n - 1] = l_r/p_r;
+ //  printf("l_r: %f, %f, res:%f\n", l_r, p_r, res[n-1]);
+  for (int i = n - 2 ; i >=0 ; i--)
+  {
+    double sum = 0.0;
+    // printf("----%f, %f, i:%d----\n", c_m[i][i], c_m[i][n], i);
+    // res[i] += c_m[i][n];
+    for (int j = n - 1;  j > i; j--)
+    {
+      sum += (((-1) * (c_m[i][j]) * res[j]));
+      // printf("%f, %d, %f\n", c_m[i][j], j, res[j]);
+    }
+    // printf("\n");
+    // printf("%s\n", );
+    sum  = (c_m[i][n] + sum)/c_m[i][i];
+    res[i] = sum;
+    // printf("\n");
+   //  printf("sum:%f \n", sum);
+  }
+}
+
+
 void Gauss_elimination(int n, const double **matrix, double *vec){
   int steps = n - 1; 
   double **c_m = (double **)malloc(sizeof(double *) * n);
+ //  double *res = (double *)malloc(sizeof(double*) * n);
   initMatrixVector(c_m, n + 1);
   copy_matrix(n, matrix, c_m);
   // memcpy(c_m, matrix, sizeof(double) * n * n + 1);
@@ -285,7 +306,14 @@ void Gauss_elimination(int n, const double **matrix, double *vec){
     c_m = swap_rows(n, s, m_r, c_m);
     c_m = Forward_elimination(n, s, c_m);
   }
-
+  // printMatrix(n, c_m);
+  // printf("Back_substitution\n");
+  for (int i = 0; i < n; i++)
+  {
+    vec[i] = 0.0;
+  }
+  Back_substitution(n, c_m, vec);
+  printVector(n, vec);
 }
 
 
