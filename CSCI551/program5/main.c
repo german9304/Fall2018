@@ -167,24 +167,18 @@ void Hello(void) {
 
 }  /* Hello */
 
-void Forward_elimination(double **matrix, double *vec){
 
-}
 
-void Back_substitution(double **matrix, double *vec){
-
-}
-
-int partial_pivoting(int n, int step, double **c_m){
+int max_row(int n, int step, double **c_m){
   double max = fabsf(c_m[step][step]);
-  printf("step:%d\n", step);
+ // printf("step:%d\n", step);
   double row = step;
   // for (int i = 0; i < 1; i++)
   // {
   for (int i = step; i < n; i++)
   {
       double ij = fabsf(c_m[i][step]);
-     //  printf("%f %d\n", ij, n);
+     // printf("%d %d\n", i, step);
       if(ij > max){
         max = ij;
         row = i;
@@ -229,6 +223,52 @@ double **swap_rows(int n, int row, int max_row, double **c_m){
   return c_m;
 }
 
+
+void Back_substitution(int n, double **c_m){
+
+}
+
+double * m_d(int n, int r, double r_v, int s, double ** c_m){
+  double *mult= (double *)malloc(sizeof(double) * n + 1);
+  double *sub = (double *)malloc(sizeof(double) * n + 1);
+  for (int i = 0; i < n + 1; ++i)
+  {
+    mult[i] = (c_m[s][i] * r_v);
+    // printf("%f ", c_m[s][i]);
+  }
+   for (int i = 0; i < n + 1; ++i)
+  {
+  //  printf("%f  -  %f \n", c_m[r][i], mult[i]);
+   sub[i] = c_m[r][i] - mult[i];
+  }
+  return sub;
+}
+
+double ** Forward_elimination(int n, int s, double **c_m){
+
+  printf("step:%d, %f\n", s, c_m[s][s]);
+  printf("Forward_elimination\n");
+  double r_v = c_m[s][s];
+   for (int i = s + 1; i < n; ++i)
+   {
+    double div = c_m[i][s]/r_v;
+    // printf("%f div:%f\n", c_m[i][s], div);
+    double * r_a = m_d(n, i, div, s, c_m);
+    // printf("res:\n");
+    // for (int i = 0; i < n + 1; ++i)
+    // {
+    //   printf("%f ", r_a[i]);
+    // }
+    for (int j = 0; j < n + 1; j++)
+    {
+      c_m[i][j] = r_a[j];
+    }
+    printf("i:%d\n", i);
+    printMatrix(n, c_m);
+  }
+   return c_m;
+}
+
 void Gauss_elimination(int n, const double **matrix, double *vec){
   int steps = n - 1; 
   double **c_m = (double **)malloc(sizeof(double *) * n);
@@ -240,11 +280,10 @@ void Gauss_elimination(int n, const double **matrix, double *vec){
 
   for (int s = 0; s < steps; s++)
   {
-    int max_row = partial_pivoting(n, s, c_m);
+    int m_r = max_row(n, s, c_m);
     // printf("%d\n", max_row);
-    c_m = swap_rows(n, s, max_row, c_m);
-    printf("result matrix\n");
-    printMatrix(n, c_m);
+    c_m = swap_rows(n, s, m_r, c_m);
+    c_m = Forward_elimination(n, s, c_m);
   }
 
 }
