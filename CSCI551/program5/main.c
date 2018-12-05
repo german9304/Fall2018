@@ -194,70 +194,67 @@ void copy_matrix(int n, const double ** matrix, double **c_m){
     }
   }
 }
-double **swap_rows(int n, int row, int max_row, double **c_m){
+// double **swap_rows(int n, int row, int max_row, double **c_m){
   
-  int n_r = n + 1;
-  double r_t[n + 1];
+//   int n_r = n + 1;
+//   double r_t[n + 1];
  
-  for (int i = 0; i < n_r; ++i)
-  {
-    r_t[i] = c_m[row][i];
-  }
-  // printf("temp matrix\n");
-  // for (int i = 0; i < n_r; ++i)
-  // {
-  //   printf("%f ", r_t[i]);
-  // }
-  for (int i = 0; i < n_r; ++i)
-  {
-    c_m[row][i] = c_m[max_row][i];
-  }
+//   for (int i = 0; i < n_r; ++i)
+//   {
+//     r_t[i] = c_m[row][i];
+//   }
+//   // printf("temp matrix\n");
+//   // for (int i = 0; i < n_r; ++i)
+//   // {
+//   //   printf("%f ", r_t[i]);
+//   // }
+//   for (int i = 0; i < n_r; ++i)
+//   {
+//     c_m[row][i] = c_m[max_row][i];
+//   }
 
-  for (int i = 0; i < n_r; ++i)
-  {
-    c_m[max_row][i] = r_t[i];
-  }
-  return c_m;
+//   for (int i = 0; i < n_r; ++i)
+//   {
+//     c_m[max_row][i] = r_t[i];
+//   }
+//   return c_m;
+// }
+
+void Swap_rows(double **a, double **b){
+  double * temp = *a;
+  *a = *b;
+  *b = temp;
 }
 
-
-
-double * m_d(int n, int r, double r_v, int s, double ** c_m){
-  double *mult= (double *)malloc(sizeof(double) * n + 1);
-  double *sub = (double *)malloc(sizeof(double) * n + 1);
-  for (int i = 0; i < n + 1; ++i)
-  {
-    mult[i] = (c_m[s][i] * r_v);
-    // printf("%f ", c_m[s][i]);
-  }
-   for (int i = 0; i < n + 1; ++i)
-  {
-  //  printf("%f  -  %f \n", c_m[r][i], mult[i]);
-   sub[i] = c_m[r][i] - mult[i];
-  }
-  return sub;
-}
+// double * M_d(int n, int r, double r_v, int s, double ** c_m){
+//   double *mult= (double *)malloc(sizeof(double) * n + 1);
+//   double *sub = (double *)malloc(sizeof(double) * n + 1);
+//   for (int i = 0; i < n + 1; ++i)
+//   {
+//     mult[i] = (c_m[s][i] * r_v);
+//     // printf("%f ", c_m[s][i]);
+//   }
+//    for (int i = 0; i < n + 1; ++i)
+//   {
+//   //  printf("%f  -  %f \n", c_m[r][i], mult[i]);
+//    sub[i] = c_m[r][i] - mult[i];
+//   }
+//   return sub;
+// }
 
 double ** Forward_elimination(int n, int s, double **c_m){
 
-  // printf("step:%d, %f\n", s, c_m[s][s]);
-  // printf("Forward_elimination\n");
   double r_v = c_m[s][s];
    for (int i = s + 1; i < n; ++i)
    {
     double div = c_m[i][s]/r_v;
-    // printf("%f div:%f\n", c_m[i][s], div);
-    double * r_a = m_d(n, i, div, s, c_m);
-    // printf("res:\n");
-    // for (int i = 0; i < n + 1; ++i)
-    // {
-    //   printf("%f ", r_a[i]);
-    // }
+   //  double * r_a = M_d(n, i, div, s, c_m);
     for (int j = 0; j < n + 1; j++)
     {
-      c_m[i][j] = r_a[j];
+      c_m[i][j] = c_m[i][j] - (c_m[s][j] * div);
     }
   }
+ //  r_a[j];
    return c_m;
 }
 
@@ -286,31 +283,31 @@ void Back_substitution(int n, double **c_m, double *res){
 }
 
 
-void Gauss_elimination(int n, const double **matrix, double *vec){
+void Gauss_elimination(
+  int n, 
+  const double **matrix, 
+  double *vec, 
+  int thread_count){
+
   int steps = n - 1; 
   double **c_m = (double **)malloc(sizeof(double *) * n);
- //  double *res = (double *)malloc(sizeof(double*) * n);
   initMatrixVector(c_m, n + 1);
   copy_matrix(n, matrix, c_m);
-  // memcpy(c_m, matrix, sizeof(double) * n * n + 1);
-  // printf("copy_matrix\n");
-  // printMatrix(n, c_m);
-
   for (int s = 0; s < steps; s++)
   {
     int m_r = max_row(n, s, c_m);
     // printf("%d\n", max_row);
-    c_m = swap_rows(n, s, m_r, c_m);
+   // c_m = swap_rows(n, s, m_r, c_m);
+    Swap_rows(&c_m[s], &c_m[m_r]);
     c_m = Forward_elimination(n, s, c_m);
+    // printf("forward elimination\n");
+    // printMatrix(n, c_m);
   }
-  // printMatrix(n, c_m);
-  // printf("Back_substitution\n");
   for (int i = 0; i < n; i++)
   {
     vec[i] = 0.0;
   }
   Back_substitution(n, c_m, vec);
-  // printVector(n, vec);
 }
 
 double Square_norm(int n, double **a, double *vec){
@@ -323,15 +320,16 @@ double Square_norm(int n, double **a, double *vec){
     for (j = 0; j < n; j++)
     {
       res_vec[i] += (a[i][j] * vec[j]);
-      printf("%f * %f \n", a[i][j], vec[j]);
+     // printf("%f * %f \n", a[i][j], vec[j]);
     }
     res_vec[i] =  res_vec[i] - a[i][j];
     euc_norm  = euc_norm + pow(res_vec[i], 2);
-    printf("i:%d, j:%d\n",i, j);
+    // printf("i:%d, j:%d\n",i, j);
     // printf("---------\n");
   }
-  printf("euc_norm:%.10e\n", sqrt(euc_norm));
-  return 0.0;
+  // printf("euc_norm:%.10e\n", sqrt(euc_norm));
+  free(res_vec);
+  return sqrt(euc_norm);
 }
 
 int main(int argc, char* argv[]){
@@ -361,14 +359,15 @@ int main(int argc, char* argv[]){
     createRandomMatrix(matrix, n, ns);
   }
 
-  Gauss_elimination(n, (const double **) matrix, vec);
+  Gauss_elimination(n, (const double **) matrix, vec, thread_count);
   // printf("original matrix\n");
   // printMatrix(n, matrix);
-  Square_norm(n, matrix, vec);
+  double s_r = Square_norm(n, matrix, vec);
   if (n < 11)
   {
     printMatrix(n, matrix);
     printVector(n, vec);
+    printf("L2-norm residual = %.10e\n", s_r);
   }
   // initVector(vec, n);
  
