@@ -82,9 +82,6 @@ void createMatrix(double **matrix, int n, int ns)
       scanf("%lf", &matrix[i][j]);
     }//for
   }//for
-
-  printf("result matrix\n");
-  printMatrix(n, matrix);
 }//createMatrix
 
 
@@ -313,9 +310,24 @@ void Gauss_elimination(int n, const double **matrix, double *vec){
     vec[i] = 0.0;
   }
   Back_substitution(n, c_m, vec);
-  printVector(n, vec);
+  // printVector(n, vec);
 }
 
+double Square_norm(int n, double **a, double *vec){
+  double *res_vec = (double*)malloc(sizeof(double) * n);
+  double euc_norm = 0.0;
+  for (int i = 0; i < n; i++)
+  {
+   // res_vec[i] = 0.0;
+    for (int j = 0; j < n; j++)
+    {
+      // res_vec[j] += (a[i][j] * vec[j]);
+      printf("%f * %f \n", a[i][j], vec[j]);
+    }
+    printf("---------\n");
+  }
+  return 0.0;
+}
 
 int main(int argc, char* argv[]){
   int n = strtol(argv[1], NULL, 10);
@@ -347,11 +359,12 @@ int main(int argc, char* argv[]){
   Gauss_elimination(n, (const double **) matrix, vec);
   // printf("original matrix\n");
   // printMatrix(n, matrix);
-  // if (n < 11)
-  // {
-  //   printMatrix(matrix, n);
-  //   printVector(vec, n);
-  // }
+  Square_norm(n, matrix, vec);
+  if (n < 11)
+  {
+    printMatrix(n, matrix);
+    printVector(n, vec);
+  }
   // initVector(vec, n);
  
   // if (n < 11)
