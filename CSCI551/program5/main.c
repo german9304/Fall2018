@@ -316,16 +316,21 @@ void Gauss_elimination(int n, const double **matrix, double *vec){
 double Square_norm(int n, double **a, double *vec){
   double *res_vec = (double*)malloc(sizeof(double) * n);
   double euc_norm = 0.0;
+  int i, j;
   for (int i = 0; i < n; i++)
   {
-   // res_vec[i] = 0.0;
-    for (int j = 0; j < n; j++)
+    res_vec[i] = 0.0;
+    for (j = 0; j < n; j++)
     {
-      // res_vec[j] += (a[i][j] * vec[j]);
+      res_vec[i] += (a[i][j] * vec[j]);
       printf("%f * %f \n", a[i][j], vec[j]);
     }
-    printf("---------\n");
+    res_vec[i] =  res_vec[i] - a[i][j];
+    euc_norm  = euc_norm + pow(res_vec[i], 2);
+    printf("i:%d, j:%d\n",i, j);
+    // printf("---------\n");
   }
+  printf("euc_norm:%.10e\n", sqrt(euc_norm));
   return 0.0;
 }
 
