@@ -285,17 +285,19 @@ void Back_substitution(int n, double **c_m, double *res, int thread_count){
 //     res[i] = sum;
 //   }
 int i, j;
-for(j = n - 1; j >= 0; j--){
- // printf("%f / %f\n", c_m[j][n], c_m[j][j]);
-  res[j] = c_m[j][n] / c_m[j][j];
-   //  printf("iter:%d. %d res:%f\n", j, j, res[j]);
-    for(i = j - 1 ; i >= 0; i--){
-     // printf("%d %d %f\n", i, j-1, test[i][j-1]);
-     // printf("%d, %d,  %f - %f * %f\n", i, j, c_m[i][n], c_m[i][j] , res[j]);
-     c_m[i][n] = c_m[i][n] - (c_m[i][j] * res[j]);
+# pragma omp parallel for num_threads(thread_count)  \
+      default(none) private(i, j)  shared(res, c_m, n)
+  for(j = n - 1; j >= 0; j--){
+   // printf("%f / %f\n", c_m[j][n], c_m[j][j]);
+    res[j] = c_m[j][n] / c_m[j][j];
+     //  printf("iter:%d. %d res:%f\n", j, j, res[j]);
+      for(i = j - 1 ; i >= 0; i--){
+       // printf("%d %d %f\n", i, j-1, test[i][j-1]);
+       // printf("%d, %d,  %f - %f * %f\n", i, j, c_m[i][n], c_m[i][j] , res[j]);
+       c_m[i][n] = c_m[i][n] - (c_m[i][j] * res[j]);
+      }
+     //  printf("\n");
     }
-   //  printf("\n");
-  }
 }
 
 
