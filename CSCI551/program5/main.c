@@ -266,6 +266,11 @@ double ** Forward_elimination(int n, int s, double **c_m, int thread_count){
    return c_m;
 }
 
+/**
+*
+* Columned oriented Back substitution
+*
+*/
 void Back_substitution(int n, double **c_m, double *res, int thread_count){
 //   double l_r = c_m[n - 1][n];
 //   double p_r = c_m[n - 1][n - 1];
@@ -285,13 +290,16 @@ void Back_substitution(int n, double **c_m, double *res, int thread_count){
 //     res[i] = sum;
 //   }
 int i, j;
-# pragma omp parallel for num_threads(thread_count)  \
-      default(none) private(i, j)  shared(res, c_m, n)
   for(j = n - 1; j >= 0; j--){
    // printf("%f / %f\n", c_m[j][n], c_m[j][j]);
     res[j] = c_m[j][n] / c_m[j][j];
      //  printf("iter:%d. %d res:%f\n", j, j, res[j]);
+
+# pragma omp parallel for num_threads(thread_count)  \
+      default(none) private(i)  shared(j, res, c_m, n)
       for(i = j - 1 ; i >= 0; i--){
+        // int my_rank = omp_get_thread_num();
+        // printf("my_rank:%d\n", my_rank);
        // printf("%d %d %f\n", i, j-1, test[i][j-1]);
        // printf("%d, %d,  %f - %f * %f\n", i, j, c_m[i][n], c_m[i][j] , res[j]);
        c_m[i][n] = c_m[i][n] - (c_m[i][j] * res[j]);
