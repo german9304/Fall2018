@@ -242,43 +242,59 @@ void Swap_rows(double **a, double **b){
 //   return sub;
 // }
 
-double ** Forward_elimination(int n, int s, double **c_m){
+double ** Forward_elimination(int n, int s, double **c_m, int thread_count){
 
   double r_v = c_m[s][s];
-   for (int i = s + 1; i < n; ++i)
-   {
-    double div = c_m[i][s]/r_v;
-   //  double * r_a = M_d(n, i, div, s, c_m);
-    for (int j = 0; j < n + 1; j++)
+  int i, j;
+  double div;
+# pragma omp parallel for num_threads(thread_count)  \
+      default(none) private(i, j, div)  shared(r_v, c_m, s, n)
+  for (i = s + 1; i < n; ++i)
+  {
+    div = c_m[i][s]/r_v;
+    //  double * r_a = M_d(n, i, div, s, c_m);
+    for (j = 0; j < n + 1; j++)
     {
+      // int my_rank = omp_get_thread_num();
+      // printf("my_rank:%d\n", my_rank);
       c_m[i][j] = c_m[i][j] - (c_m[s][j] * div);
+     // printf("i:%d j:%d \n", i, j);
     }
+   //  printf("\n");
   }
  //  r_a[j];
    return c_m;
 }
 
-void Back_substitution(int n, double **c_m, double *res){
-  double l_r = c_m[n - 1][n];
-  double p_r = c_m[n - 1][n - 1];
-  res[n - 1] = l_r/p_r;
- //  printf("l_r: %f, %f, res:%f\n", l_r, p_r, res[n-1]);
-  for (int i = n - 2 ; i >=0 ; i--)
-  {
-    double sum = 0.0;
-    // printf("----%f, %f, i:%d----\n", c_m[i][i], c_m[i][n], i);
-    // res[i] += c_m[i][n];
-    for (int j = n - 1;  j > i; j--)
-    {
-      sum += (((-1) * (c_m[i][j]) * res[j]));
-      // printf("%f, %d, %f\n", c_m[i][j], j, res[j]);
+void Back_substitution(int n, double **c_m, double *res, int thread_count){
+//   double l_r = c_m[n - 1][n];
+//   double p_r = c_m[n - 1][n - 1];
+//   res[n - 1] = l_r/p_r;
+//   int i, j;
+//   double sum;
+//   for (i = n - 2 ; i >=0 ; i--)
+//   {
+//     sum = 0.0;
+// // # pragma omp parallel for num_threads(thread_count)  \
+// //       default(none) private(i, j, sum)  shared(res, n, c_m)
+//     for (j = n - 1;  j > i; j--)
+//     {
+//       sum += (((-1) * (c_m[i][j]) * res[j]));
+//     }
+//     sum  = (c_m[i][n] + sum)/c_m[i][i];
+//     res[i] = sum;
+//   }
+int i, j;
+for(j = n - 1; j >= 0; j--){
+ // printf("%f / %f\n", c_m[j][n], c_m[j][j]);
+  res[j] = c_m[j][n] / c_m[j][j];
+   //  printf("iter:%d. %d res:%f\n", j, j, res[j]);
+    for(i = j - 1 ; i >= 0; i--){
+     // printf("%d %d %f\n", i, j-1, test[i][j-1]);
+     // printf("%d, %d,  %f - %f * %f\n", i, j, c_m[i][n], c_m[i][j] , res[j]);
+     c_m[i][n] = c_m[i][n] - (c_m[i][j] * res[j]);
     }
-    // printf("\n");
-    // printf("%s\n", );
-    sum  = (c_m[i][n] + sum)/c_m[i][i];
-    res[i] = sum;
-    // printf("\n");
-   //  printf("sum:%f \n", sum);
+   //  printf("\n");
   }
 }
 
@@ -299,7 +315,7 @@ void Gauss_elimination(
     // printf("%d\n", max_row);
    // c_m = swap_rows(n, s, m_r, c_m);
     Swap_rows(&c_m[s], &c_m[m_r]);
-    c_m = Forward_elimination(n, s, c_m);
+    c_m = Forward_elimination(n, s, c_m, thread_count);
     // printf("forward elimination\n");
     // printMatrix(n, c_m);
   }
@@ -307,7 +323,7 @@ void Gauss_elimination(
   {
     vec[i] = 0.0;
   }
-  Back_substitution(n, c_m, vec);
+  Back_substitution(n, c_m, vec, thread_count);
 }
 
 double Square_norm(int n, double **a, double *vec){
@@ -365,6 +381,7 @@ int main(int argc, char* argv[]){
   double s_r = Square_norm(n, matrix, vec);
   if (n < 11)
   {
+    printf("Number of threads: %d\n", thread_count);
     printMatrix(n, matrix);
     printVector(n, vec);
     printf("L2-norm residual = %.10e\n", s_r);
