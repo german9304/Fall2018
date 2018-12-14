@@ -1,0 +1,45 @@
+Thu Dec 13 02:09:33 UTC 2018
+Number of processors = 256
+Number of threads = 1
+Elapsed time = 1321.974280
+L2-norm residual = 1.5376333732e-03
+Thu Dec 13 02:08:18 UTC 2018
+Number of processors = 256
+Number of threads = 2
+Elapsed time = 674.530134
+L2-norm residual = 4.8655378824e-03
+Thu Dec 13 02:02:58 UTC 2018
+Number of processors = 256
+Number of threads = 5
+Elapsed time = 274.935025
+L2-norm residual = 1.4180917411e-01
+Thu Dec 13 02:00:37 UTC 2018
+Number of processors = 256
+Number of threads = 10
+Elapsed time = 181.935775
+L2-norm residual = 1.1974180374e-03
+Thu Dec 13 02:00:20 UTC 2018
+Number of processors = 256
+Number of threads = 20
+Elapsed time = 96.536327
+L2-norm residual = 2.1015690362e-03
+Thu Dec 13 02:00:21 UTC 2018
+Number of processors = 256
+Number of threads = 30
+Elapsed time = 69.462608
+L2-norm residual = 8.6903897442e-04
+Thu Dec 13 02:09:09 UTC 2018
+Number of processors = 256
+Number of threads = 40
+Elapsed time = 60.484059
+L2-norm residual = 2.3556982655e-03
+Thu Dec 13 02:00:52 UTC 2018
+Number of processors = 256
+Number of threads = 50
+Elapsed time = 60.890490
+L2-norm residual = 9.9385844404e-04
+Thu Dec 13 02:01:32 UTC 2018
+Number of processors = 256
+Number of threads = 60
+Elapsed time = 61.043683
+L2-norm residual = 4.0759671414e-03

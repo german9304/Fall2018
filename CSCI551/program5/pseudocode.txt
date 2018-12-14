@@ -1,0 +1,21 @@
+
+n = matrix size
+steps = n - 1
+
+for s = 0 to steps
+
+    // partial pivoting
+    max_row = a[s][s]
+    for i = s to n - 1
+       if a[i][s] > max_row 
+          max_row = a[i][s]
+
+     // swap rows 
+     swap Row &a[s] with Row &a[max_row]
+
+    // forward elimination
+    
+
+    // Back Susbsitution
+
+
