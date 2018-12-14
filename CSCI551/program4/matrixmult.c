@@ -178,10 +178,12 @@ void ijkForm(
     {
         for (int j = 0; j < n; j++)
         {
+            int sum = 0;
             for (int k = 0; k < n; k++)
             {
-                r_m[i * n + j] += m_1[i * n + k] * m_2[k * n + j];
+                sum += m_1[i * n + k] * m_2[k * n + j];
             }
+            r_m[i * n + j] = sum;
         }
     }
     
@@ -204,9 +206,11 @@ void ikjForm(
     {
         for (int k = 0; k < n; k++)
         {
+           int mid = m_1[(i * n) + k];
             for (int j = 0; j < n; j++)
             {
-                r_m[i * n + j] += m_1[(i * n) + k] * m_2[k * n + j];
+               r_m[i * n + j] += mid * m_2[k * n + j];
+               // r_m[i * n + j] += m_1[(i * n) + k] * m_2[k * n + j];
             }
         }
     }
@@ -229,9 +233,10 @@ void kijForm(
     {
         for (int i = 0; i < p_r/n; i++)
         {
+            int mid = m_1[i * n + k];
             for (int j = 0; j < n; j++)
             {
-                r_m[i * n + j] += m_1[i * n + k] * m_2[k * n + j];
+                r_m[i * n + j] += mid * m_2[k * n + j];
             }
         }
     }
