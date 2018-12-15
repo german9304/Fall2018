@@ -1,45 +1,45 @@
 Fri Dec 14 04:23:15 UTC 2018
 Number of processors = 256
 Number of threads = 1
-Elapsed time = 1320.018931
- secondsL2-norm residual = 1.6041545959e-03
+Elapsed time = 1320.018931 seconds
+L2-norm residual = 1.6041545959e-03
 Fri Dec 14 04:15:02 UTC 2018
 Number of processors = 256
 Number of threads = 2
-Elapsed time = 670.469878
- secondsL2-norm residual = 5.0691581303e-04
+Elapsed time = 670.469878 seconds
+L2-norm residual = 5.0691581303e-04
 Fri Dec 14 04:27:12 UTC 2018
 Number of processors = 256
 Number of threads = 5
-Elapsed time = 273.407998
- secondsL2-norm residual = 2.5305996719e-03
+Elapsed time = 273.407998 seconds
+L2-norm residual = 2.5305996719e-03
 Fri Dec 14 04:32:59 UTC 2018
 Number of processors = 256
 Number of threads = 10
-Elapsed time = 140.123469
- secondsL2-norm residual = 2.3743584164e-03
+Elapsed time = 140.123469 seconds
+L2-norm residual = 2.3743584164e-03
 Fri Dec 14 04:36:14 UTC 2018
 Number of processors = 256
 Number of threads = 20
-Elapsed time = 74.739054
- secondsL2-norm residual = 1.0914311622e-03
+Elapsed time = 74.739054 seconds
+L2-norm residual = 1.0914311622e-03
 Fri Dec 14 04:46:00 UTC 2018
 Number of processors = 256
 Number of threads = 30
-Elapsed time = 58.928555
- secondsL2-norm residual = 1.0399429346e-02
+Elapsed time = 58.928555 seconds
+L2-norm residual = 1.0399429346e-02
 Fri Dec 14 04:38:25 UTC 2018
 Number of processors = 256
 Number of threads = 40
-Elapsed time = 58.418165
- secondsL2-norm residual = 2.7202926517e-03
+Elapsed time = 58.418165 seconds
+L2-norm residual = 2.7202926517e-03
 Fri Dec 14 04:47:52 UTC 2018
 Number of processors = 256
 Number of threads = 50
-Elapsed time = 58.673411
- secondsL2-norm residual = 6.6444031336e-04
+Elapsed time = 58.673411 seconds
+L2-norm residual = 6.6444031336e-04
 Fri Dec 14 04:40:19 UTC 2018
 Number of processors = 256
 Number of threads = 60
-Elapsed time = 59.097017
- secondsL2-norm residual = 7.9259835303e-04
+Elapsed time = 59.097017 seconds
+L2-norm residual = 7.9259835303e-04

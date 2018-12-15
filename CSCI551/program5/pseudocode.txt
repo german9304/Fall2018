@@ -1,21 +1,41 @@
 
-n = matrix size
-steps = n - 1
+// Guass elimination
+	n = matrix size
+	steps = n - 1
+	for s = 0 to steps
+	  partial pivoting section
+	    max_row = a[s][s]
+	    for i = s to n - 1
+	       if a[i][s] > max_row 
+	          max_row = a[i][s]
+	       end if
+	    end for   
+        // swap rows with max row
+        swap Row &a[s] with Row &a[max_row]
+	  forward elimination
+		// create the upper triangular matrix
+		r_v = c_m[s][s]
+		# omp parallel for num_threads(thread_count) \ 
+		   default(none) private(i, j, div)  shared(r_v, c_m, s, n)
+		for i = 0 to n
+		  div = c_m[i][s] / r_v
+		  for j to n + 1
+		      c_m[i][j] = c_m[i][j] - (c_m[i][s] * div)
+		  end for
+		end for
+	end for 
 
-for s = 0 to steps
+	Back Susbsitution
+	  i, j 
+	  for j = n - 1 to j >= 0
+	     res[j] = c_m[j][n]
+	     # pragma omp parallel for num_threads(thread_count)  \
+            default(none) private(i)  shared(j, res, c_m, n)
+            for i = j - 1 to i >=0 
+                c_m[i][n] = c_m[i][n] - (c_m[i][j] * res[j])
+            end for
+      end for
 
-    // partial pivoting
-    max_row = a[s][s]
-    for i = s to n - 1
-       if a[i][s] > max_row 
-          max_row = a[i][s]
 
-     // swap rows 
-     swap Row &a[s] with Row &a[max_row]
-
-    // forward elimination
-    
-
-    // Back Susbsitution
 
 

@@ -25,7 +25,7 @@
 * @return none 
 *
 */
-void initMatrixVector(double **matrix, int n)
+void initMatrixVector(int n, double **matrix)
 {
   for (int i = 0; i < n; i++)
   {
@@ -73,13 +73,14 @@ void printMatrix(int n, double **matrix)
 * @return none 
 *
 */
-void createMatrix(double **matrix, int n, int ns)
+void createMatrix(double **matrix, double **c_m, int n, int ns)
 {
   for (int i = 0; i < n; i++)
   {
     for (int j = 0; j < ns; j++)
     {
       scanf("%lf", &matrix[i][j]);
+      c_m[i][j] = matrix[i][j];
     }//for
   }//for
 }//createMatrix
@@ -102,7 +103,7 @@ void createMatrix(double **matrix, int n, int ns)
 * @return none 
 *
 */
-void createRandomMatrix(double **matrix, int n, int ns)
+void createRandomMatrix(double **matrix, double **c_m, int n, int ns)
 {
   srand48(time(0));
   for (int i = 0; i < n; i++)
@@ -112,6 +113,7 @@ void createRandomMatrix(double **matrix, int n, int ns)
     {
        // matrix[i][j] = (drand48() * (1000000 - -1000000 + 1)) + -1000000;
         matrix[i][j] =  (drand48() * (1.0e6 - -1.0e6 + 1)) + -1.0e6;
+        c_m[i][j] = matrix[i][j];
     }//for
   }//for
 }//createRandomMatrix
@@ -128,11 +130,11 @@ void createRandomMatrix(double **matrix, int n, int ns)
 * @return none 
 *
 */
-void initVector(double *vec, int n)
+void initVector(int n, double *vec)
 {
   for (int i = 0; i < n; i++)
   {
-    vec[i] = 1.0;
+    vec[i] = 0.0;
   }//for
 }//initVector
 /*
@@ -310,17 +312,12 @@ int i, j;
 
 
 void Gauss_elimination(
-  int n, 
-  const double **matrix, 
+  int n,  
   double *vec, 
-  double *start_time,
+  double **c_m,
   int thread_count){
 
   int steps = n - 1; 
-  double **c_m = (double **)malloc(sizeof(double *) * n);
-  initMatrixVector(c_m, n + 1);
-  copy_matrix(n, matrix, c_m);
-  *start_time = omp_get_wtime();
   for (int s = 0; s < steps; s++)
   {
     int m_r = max_row(n, s, c_m);
@@ -331,10 +328,10 @@ void Gauss_elimination(
     // printf("forward elimination\n");
     // printMatrix(n, c_m);
   }
-  for (int i = 0; i < n; i++)
-  {
-    vec[i] = 0.0;
-  }
+  // for (int i = 0; i < n; i++)
+  // {
+  //   vec[i] = 0.0;
+  // }
   Back_substitution(n, c_m, vec, thread_count);
 }
 
@@ -366,6 +363,7 @@ int main(int argc, char* argv[]){
   double start_time, finish_time;
   double *vec = NULL;
   double **matrix = NULL;
+  double **c_m = NULL;
   int ns = 0;
   int num_procs = omp_get_num_procs();
   if (argc > 2)
@@ -382,23 +380,29 @@ int main(int argc, char* argv[]){
  
 
   ns = n + 1;
+  c_m = (double **)malloc(sizeof(double *) * n);
+  // initMatrixVector(c_m, n + 1);
+ // copy_matrix(n, matrix, c_m);
   vec = (double *)malloc(sizeof(double *) * n);
   matrix = (double **)malloc(sizeof(double *) * n);
 
-  initMatrixVector(matrix, ns);
+  initMatrixVector(ns, matrix); //original matrix
+  initMatrixVector(ns, c_m); //augmented matrix
+  initVector(n, vec); //init vector
   
   if (n < 11)
   {
-    createMatrix(matrix, n, ns);
+    createMatrix(matrix, c_m, n, ns);
   }
   else if (n > 10)
   {
-    createRandomMatrix(matrix, n, ns);
+    createRandomMatrix(matrix, c_m, n, ns);
   }
  // createRandomMatrix(matrix, n, ns);
- // createMatrix(matrix, n, ns);
+// createMatrix(matrix, c_m, n, ns);
  // printMatrix(n, matrix);
-  Gauss_elimination(n, (const double **) matrix, vec, &start_time, thread_count);
+  start_time = omp_get_wtime();
+  Gauss_elimination(n, vec, c_m, thread_count);
   // printf("original matrix\n");
   // printMatrix(n, matrix);
   finish_time = omp_get_wtime();
@@ -406,8 +410,8 @@ int main(int argc, char* argv[]){
   double s_r = Square_norm(n, matrix, vec);
   if (n < 11)
   {
-    printMatrix(n, matrix);
-    printVector(n, vec);
+   printMatrix(n, matrix);
+   printVector(n, vec);
   }
   printf("Number of processors = %d\n", num_procs);
   printf("Number of threads = %d\n", thread_count);
