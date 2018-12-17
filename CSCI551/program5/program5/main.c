@@ -27,7 +27,7 @@
 */
 void initMatrixVector(int n, double **matrix)
 {
-  for (int i = 0; i < n; i++)
+  for (int i = 0; i < n - 1; i++)
   {
     matrix[i] = (double *)malloc(sizeof(double *) * n);
   }//for
@@ -239,12 +239,12 @@ void Swap_rows(double **a, double **b){
 //   return sub;
 // }
 
-double ** Forward_elimination(int n, int s, double **c_m, int thread_count){
+double ** Forward_elimination(int n, int s, double **c_m){
 
   double r_v = c_m[s][s];
   int i, j;
   double div;
-# pragma omp parallel for num_threads(thread_count)  \
+# pragma omp parallel for  \
       default(none) private(i, j, div)  shared(r_v, c_m, s, n)
   for (i = s + 1; i < n; ++i)
   {
@@ -268,7 +268,7 @@ double ** Forward_elimination(int n, int s, double **c_m, int thread_count){
 * Columned oriented Back substitution
 *
 */
-void Back_substitution(int n, double **c_m, double *res, int thread_count){
+void Back_substitution(int n, double **c_m, double *res){
 //   double l_r = c_m[n - 1][n];
 //   double p_r = c_m[n - 1][n - 1];
 //   res[n - 1] = l_r/p_r;
@@ -296,11 +296,11 @@ int i, j;
     // printf("[%d][%d]\n", j, n);
      // printf("iter:%d. %d res:%f\n", j, j, res[j]);
 
-# pragma omp parallel for num_threads(thread_count)  \
+# pragma omp parallel for   \
       default(none) private(i)  shared(j, res, c_m, n)
       for(i = j - 1 ; i >= 0; i--){
-      // int my_rank = omp_get_thread_num();
-       //  printf("my_rank:%d %d, %f,\n", my_rank, i, c_m[i][n], res[j]);
+     // int my_rank = omp_get_thread_num();
+     //   printf("my_rank:%d %f \n", my_rank, c_m[i][n]);
        // printf("%d %d %f\n", i, j-1, test[i][j-1]);
        // printf("%d, %d,  %f - %f * %f\n", i, j, c_m[i][n], c_m[i][j] , res[j]);
        c_m[i][n] = c_m[i][n] - (c_m[i][j] * res[j]);
@@ -314,8 +314,7 @@ int i, j;
 void Gauss_elimination(
   int n,  
   double *vec, 
-  double **c_m,
-  int thread_count){
+  double **c_m){
 
   int steps = n - 1; 
   for (int s = 0; s < steps; s++)
@@ -324,7 +323,7 @@ void Gauss_elimination(
     // printf("%d\n", max_row);
    // c_m = swap_rows(n, s, m_r, c_m);
     Swap_rows(&c_m[s], &c_m[m_r]);
-    c_m = Forward_elimination(n, s, c_m, thread_count);
+    c_m = Forward_elimination(n, s, c_m);
     // printf("forward elimination\n");
     // printMatrix(n, c_m);
   }
@@ -332,7 +331,7 @@ void Gauss_elimination(
   // {
   //   vec[i] = 0.0;
   // }
-  Back_substitution(n, c_m, vec, thread_count);
+  Back_substitution(n, c_m, vec);
 }
 
 double Square_norm(int n, double **a, double *vec){
@@ -368,13 +367,12 @@ int main(int argc, char* argv[]){
   int num_procs = omp_get_num_procs();
   if (argc > 2)
   {
+    printf("thread here\n");
     thread_count = strtol(argv[2], NULL, 10);
   }
-  #pragma omp parallel num_threads(thread_count)
+  #pragma omp parallel 
   {
-    if (omp_get_thread_num() == 0){
       thread_count = omp_get_num_threads();
-    }
   }
 
  
@@ -398,11 +396,11 @@ int main(int argc, char* argv[]){
   {
     createRandomMatrix(matrix, c_m, n, ns);
   }
- // createRandomMatrix(matrix, n, ns);
 // createMatrix(matrix, c_m, n, ns);
- // printMatrix(n, matrix);
+  // printf("before\n");
+ // printMatrix(n, c_m);
   start_time = omp_get_wtime();
-  Gauss_elimination(n, vec, c_m, thread_count);
+  Gauss_elimination(n, vec, c_m);
   // printf("original matrix\n");
   // printMatrix(n, matrix);
   finish_time = omp_get_wtime();
@@ -413,9 +411,10 @@ int main(int argc, char* argv[]){
    printMatrix(n, matrix);
    printVector(n, vec);
   }
+  // printVector(n, vec);
   printf("Number of processors = %d\n", num_procs);
   printf("Number of threads = %d\n", thread_count);
-  printf("Elapsed time = %f\n seconds", finish_time - start_time);
+  printf("Elapsed time = %f seconds\n", finish_time - start_time);
   printf("L2-norm residual = %.10e\n", s_r);
   // initVector(vec, n);
  

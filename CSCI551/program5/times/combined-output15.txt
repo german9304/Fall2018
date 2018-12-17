@@ -41,5 +41,6 @@ L2-norm residual = 2.2658849288e-03
 Sat Dec 15 05:13:35 UTC 2018
 Number of processors = 256
 Number of threads = 60
+Elapsed time = 57.869521 seconds
 Elapsed time = 58.149057 seconds
 L2-norm residual = 2.7668743214e-03
