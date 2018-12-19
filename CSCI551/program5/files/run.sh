@@ -2,7 +2,7 @@
 ### script to run one job
 
 ### Set the job name
-###scp -r program5 german9304@login-29-239.pod.penguincomputing.com:/home/german9304
+###scp -r grazo.tar.gz german9304@login-29-239.pod.penguincomputing.com:/home/german9304
 ###ssh  german9304@login-29-239.pod.penguincomputing.com
 #PBS -N gaussElimination
 

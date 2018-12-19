@@ -1,6 +1,9 @@
 /**
- * @file main.c
+ * @file gauss.c
  * @author  German Razo 
+ *
+ * @brief This program implements a parallel version
+ *        of Gaussian elimination with partial pivoting.
  *
  *   
  *
@@ -52,7 +55,7 @@ void printMatrix(int n, double **matrix)
   {
     for (int j = 0; j < n + 1; j++)
     {
-      printf("%f ", matrix[i][j]);
+      printf("%.10e ", matrix[i][j]);
     } //for
     printf("\n");
   } //for
@@ -82,8 +85,8 @@ void createMatrix(double **matrix, double **c_m, int n, int ns)
     {
       scanf("%lf", &matrix[i][j]);
       c_m[i][j] = matrix[i][j];
-    }//for
-  }//for
+    } //for
+  }   //for
 } /* createMatrix */
 
 /*
@@ -112,9 +115,9 @@ void createRandomMatrix(double **matrix, double **c_m, int n, int ns)
     {
       matrix[i][j] = (drand48() * (1.0e6 - -1.0e6 + 1)) + -1.0e6;
       c_m[i][j] = matrix[i][j];
-    }//for
-  }//for
-}/* createRandomMatrix */
+    } //for
+  }   //for
+} /* createRandomMatrix */
 
 /*
 * 
@@ -151,8 +154,7 @@ void printVector(int n, double *vec)
 {
   for (int i = 0; i < n; i++)
   {
-    // printf("%.10e ", vec[i]);
-    printf("%f ", vec[i]);
+    printf("%.10e ", vec[i]);
   } //for
   printf("\n");
 } /* printVector */
@@ -179,11 +181,10 @@ int Max_row(int n, int step, double **c_m)
     {
       max = ij;
       row = i;
-    }//if
-  }//for
+    } //if
+  }   //for
   return row;
 } /* Max_row */
-
 
 /**
  * @brief swaps two rows by addresses.
@@ -211,12 +212,13 @@ void Swap_rows(double **a, double **b)
  * @param c_m the copy of original augmented matrix
  * @return double** 
  */
-double **Forward_elimination(int n, int s, double **c_m)
+double **Forward_elimination(int n, int s, double **c_m, int thread_count)
 {
   double r_v = c_m[s][s];
   int i, j;
   double div;
-#pragma omp parallel for default(none) private(i, j, div) shared(r_v, c_m, s, n)
+#pragma omp parallel for num_threads(thread_count) \
+        default(none) private(i, j, div) shared(r_v, c_m, s, n)
   for (i = s + 1; i < n; ++i)
   {
     div = c_m[i][s] / r_v;
@@ -229,7 +231,7 @@ double **Forward_elimination(int n, int s, double **c_m)
 } /* Forward_elimination */
 
 /**
- * @brief Implemeted parallel version of back susbtitution
+ * @brief Implemetes parallel version of back susbtitution
  *        in column oriented from the gauss elimination. 
  *        private and shared variables are set, 
  *        private variable is i and shared variables 
@@ -240,13 +242,14 @@ double **Forward_elimination(int n, int s, double **c_m)
  * @param res vector where the result of the unknowns 
  *        will be stored.
  */
-void Back_substitution(int n, double **c_m, double *res)
+void Back_substitution(int n, double **c_m, double *res, int thread_count)
 {
   int i, j;
   for (j = n - 1; j >= 0; j--)
   {
     res[j] = c_m[j][n] / c_m[j][j];
-#pragma omp parallel for default(none) private(i) shared(j, res, c_m, n)
+#pragma omp parallel for num_threads(thread_count) \
+        default(none) private(i) shared(j, res, c_m, n)
     for (i = j - 1; i >= 0; i--)
     {
       c_m[i][n] = c_m[i][n] - (c_m[i][j] * res[j]);
@@ -265,7 +268,8 @@ void Back_substitution(int n, double **c_m, double *res)
 void Gauss_elimination(
     int n,
     double *vec,
-    double **c_m)
+    double **c_m,
+    int thread_count)
 {
 
   int steps = n - 1;
@@ -273,9 +277,9 @@ void Gauss_elimination(
   {
     int m_r = Max_row(n, s, c_m);
     Swap_rows(&c_m[s], &c_m[m_r]);
-    c_m = Forward_elimination(n, s, c_m);
+    c_m = Forward_elimination(n, s, c_m, thread_count);
   }
-  Back_substitution(n, c_m, vec);
+  Back_substitution(n, c_m, vec, thread_count);
 } /* Gauss_elimination */
 /**
  * @brief implemented the l2 norm
@@ -316,11 +320,7 @@ int main(int argc, char *argv[])
   double **c_m = NULL;
   int ns = 0;
   int num_procs = omp_get_num_procs();
-  if (argc > 2)
-  {
-    thread_count = strtol(argv[2], NULL, 10);
-  }
-#pragma omp parallel
+# pragma omp parallel 
   {
     thread_count = omp_get_num_threads();
   }
@@ -342,9 +342,9 @@ int main(int argc, char *argv[])
   {
     createRandomMatrix(matrix, c_m, n, ns);
   }
-  // createMatrix(matrix, c_m, n, ns);
+
   start_time = omp_get_wtime();
-  Gauss_elimination(n, vec, c_m);
+  Gauss_elimination(n, vec, c_m, thread_count);
   finish_time = omp_get_wtime();
   double s_r = Square_norm(n, matrix, vec);
   if (n < 11)
@@ -352,7 +352,7 @@ int main(int argc, char *argv[])
     printMatrix(n, matrix);
     printVector(n, vec);
   }
-  // printVector(n, vec);
+
   printf("Number of processors = %d\n", num_procs);
   printf("Number of threads = %d\n", thread_count);
   printf("Elapsed time = %f seconds\n", finish_time - start_time);

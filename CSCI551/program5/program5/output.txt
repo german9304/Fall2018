@@ -1,0 +1,135 @@
+Sat Dec 15 02:41:53 UTC 2018
+Number of processors = 256
+Number of threads = 1
+Elapsed time = 1319.321202 seconds
+L2-norm residual = 1.8057077259e-03
+Sat Dec 15 02:33:53 UTC 2018
+Number of processors = 256
+Number of threads = 2
+Elapsed time = 670.976598 seconds
+L2-norm residual = 7.4567364195e-04
+Sat Dec 15 02:46:17 UTC 2018
+Number of processors = 256
+Number of threads = 5
+Elapsed time = 272.494903 seconds
+L2-norm residual = 1.9435404795e-03
+Sat Dec 15 02:52:03 UTC 2018
+Number of processors = 256
+Number of threads = 10
+Elapsed time = 139.234984 seconds
+L2-norm residual = 9.7895652668e-04
+Sat Dec 15 02:55:19 UTC 2018
+Number of processors = 256
+Number of threads = 20
+Elapsed time = 74.206943 seconds
+L2-norm residual = 1.1905188070e-03
+Sat Dec 15 03:05:02 UTC 2018
+Number of processors = 256
+Number of threads = 30
+Elapsed time = 57.762777 seconds
+L2-norm residual = 2.8934600246e-03
+Sat Dec 15 02:57:30 UTC 2018
+Number of processors = 256
+Number of threads = 40
+Elapsed time = 57.911769 seconds
+L2-norm residual = 3.5853718010e-03
+Sat Dec 15 03:06:48 UTC 2018
+Number of processors = 256
+Number of threads = 50
+Elapsed time = 57.526154 seconds
+L2-norm residual = 2.1954802961e-03
+Sat Dec 15 02:59:33 UTC 2018
+Number of processors = 256
+Number of threads = 60
+Elapsed time = 58.679937 seconds
+L2-norm residual = 2.7427772342e-03
+Sat Dec 15 03:29:12 UTC 2018
+Number of processors = 256
+Number of threads = 1
+Elapsed time = 1317.811006 seconds
+L2-norm residual = 9.9751062114e-04
+Sat Dec 15 03:21:01 UTC 2018
+Number of processors = 256
+Number of threads = 2
+Elapsed time = 667.908342 seconds
+L2-norm residual = 1.6134919129e-03
+Sat Dec 15 03:33:18 UTC 2018
+Number of processors = 256
+Number of threads = 5
+Elapsed time = 272.320922 seconds
+L2-norm residual = 7.2594779097e-04
+Sat Dec 15 03:38:53 UTC 2018
+Number of processors = 256
+Number of threads = 10
+Elapsed time = 139.442500 seconds
+L2-norm residual = 5.9890855177e-02
+Sat Dec 15 03:42:32 UTC 2018
+Number of processors = 256
+Number of threads = 20
+Elapsed time = 74.113128 seconds
+L2-norm residual = 2.0309855745e-03
+Sat Dec 15 03:51:58 UTC 2018
+Number of processors = 256
+Number of threads = 30
+Elapsed time = 57.867812 seconds
+L2-norm residual = 1.3830714326e-03
+Sat Dec 15 03:44:47 UTC 2018
+Number of processors = 256
+Number of threads = 40
+Elapsed time = 58.137494 seconds
+L2-norm residual = 8.5497383370e-04
+Sat Dec 15 03:54:13 UTC 2018
+Number of processors = 256
+Number of threads = 50
+Elapsed time = 57.658639 seconds
+L2-norm residual = 4.0624714082e-03
+Sat Dec 15 03:46:54 UTC 2018
+Number of processors = 256
+Number of threads = 60
+Elapsed time = 58.028646 seconds
+L2-norm residual = 7.9006755480e-03
+Sat Dec 15 04:56:36 UTC 2018
+Number of processors = 256
+Number of threads = 1
+Elapsed time = 1317.836663 seconds
+L2-norm residual = 4.5464521908e-02
+Sat Dec 15 04:48:14 UTC 2018
+Number of processors = 256
+Number of threads = 2
+Elapsed time = 669.224287 seconds
+L2-norm residual = 4.3993668505e-03
+Sat Dec 15 05:00:18 UTC 2018
+Number of processors = 256
+Number of threads = 5
+Elapsed time = 272.450031 seconds
+L2-norm residual = 3.1514652950e-03
+Sat Dec 15 05:05:48 UTC 2018
+Number of processors = 256
+Number of threads = 10
+Elapsed time = 139.458482 seconds
+L2-norm residual = 1.7687183722e-03
+Sat Dec 15 05:09:09 UTC 2018
+Number of processors = 256
+Number of threads = 20
+Elapsed time = 74.051583 seconds
+L2-norm residual = 5.8836505338e-03
+Sat Dec 15 05:11:20 UTC 2018
+Number of processors = 256
+Number of threads = 30
+Elapsed time = 58.647975 seconds
+L2-norm residual = 1.6706940983e-02
+Sat Dec 15 05:19:51 UTC 2018
+Number of processors = 256
+Number of threads = 40
+Elapsed time = 57.647826 seconds
+L2-norm residual = 1.4642857001e-03
+Sat Dec 15 05:21:52 UTC 2018
+Number of processors = 256
+Number of threads = 50
+Elapsed time = 57.520198 seconds
+L2-norm residual = 2.2658849288e-03
+Sat Dec 15 05:13:35 UTC 2018
+Number of processors = 256
+Number of threads = 60
+Elapsed time = 57.869521 seconds
+L2-norm residual = 2.7668743214e-03

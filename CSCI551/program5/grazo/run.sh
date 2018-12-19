@@ -2,8 +2,6 @@
 ### script to run one job
 
 ### Set the job name
-###scp -r grazo german9304@login-29-239.pod.penguincomputing.com:/home/german9304
-### ssh  german9304@login-29-239.pod.penguincomputing.com
 #PBS -N project3
 
 ### Join the standard output and standard error streams
@@ -19,7 +17,7 @@
 #PBS -q IntelKNL
 
 ### set directory for job execution
-cd ~german9304/program5
+cd ~german9304/grazo
 
 ### load module
 module load intel/2018
