@@ -392,8 +392,6 @@ int main(void)
             p_r = p_r + 1;
         }
         p_r *= n;
-        // printf("my_rank:%d, p_r:%d\n", my_rank, p_r);
-        // MPI_Gather(&p_r, 1, MPI_INT, send_counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
     }
     else
     {
@@ -402,8 +400,6 @@ int main(void)
             p_r += 1;
         }
         p_r *= n;
-        //  printf("my_rank:%d, p_r:%d\n", my_rank, p_r);
-        // MPI_Gather(&p_r, 1, MPI_INT, send_counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
     }
     int *send_buf = (int *)malloc(sizeof(int *) * p_r);
     int *kij_buf = (int *)malloc(sizeof(int *) * n * n);

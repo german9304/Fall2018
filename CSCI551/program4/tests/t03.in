@@ -21,3 +21,4 @@ I
 5 4 9 7 2 5 4 2 6 1
 1 2 3 18 12 3 9 9 7 9
 9 8 7 6 5 4 2 3 2 0 
+mpirun -n 3 ./matrixmult < ../tests/t03.in > t03.out
